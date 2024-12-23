@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        google() // Required for Firebase
+        mavenCentral() // Add this if missing
+    }
+    dependencies {
+        // Add the Google services classpath
+        classpath 'com.google.gms:google-services:4.3.10' // or the latest version
+    }
+}
+
 allprojects {
     repositories {
         google()

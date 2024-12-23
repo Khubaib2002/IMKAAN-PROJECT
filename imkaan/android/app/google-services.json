@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "712573298315",
+    "project_id": "khidmat-de554",
+    "storage_bucket": "khidmat-de554.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712573298315:android:2e804121fade4b940c968e",
+        "android_client_info": {
+          "package_name": "com.example.imkaan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrp31XaewPCD5tscblq0L5_xUaKNgiivQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
