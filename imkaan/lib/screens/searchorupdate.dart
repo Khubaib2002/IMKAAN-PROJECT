@@ -83,19 +83,3 @@ class Searchorupdate extends StatelessWidget {
     );
   }
 }
-
-class UpdatePatientPage extends StatelessWidget {
-  const UpdatePatientPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Update Patient Data'),
-      ),
-      body: const Center(
-        child: Text('Update Patient Page Placeholder'),
-      ),
-    );
-  }
-}

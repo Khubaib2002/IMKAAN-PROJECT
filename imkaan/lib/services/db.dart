@@ -53,10 +53,10 @@ class DatabaseService {
       int abortion,
       bool ancConsultation,
       String relation) async {
-    String formattedDOB = DateFormat('yyyy-MM-dd').format(dob);
+    String formattedDOB =
+        '${DateFormat('MMMM d, yyyy \'at\' h:mm:ss a').format(dob.toLocal())} UTC+5';
 
     return await patients.doc(pid).set({
-      'Patient_id': pid,
       'name': name,
       'address': address,
       'DOB': formattedDOB,
@@ -177,21 +177,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
   bool isUpdating = false; // Determines whether we are updating or adding
   String currentPatientId = ''; // Holds the patient ID for updating
-  void clearFields() {
-    setState(() {
-      nameController.clear();
-      addressController.clear();
-      dobController.clear();
-      medicalHistoryController.clear();
-      gravidaController.clear();
-      paraController.clear();
-      abortionController.clear();
-      ancConsultation = false;
-      relationController.clear();
-      currentPatientId = '';
-      selectedDate = null;
-    });
-  }
 
   void populateFields(String pid) async {
     try {
@@ -201,14 +186,18 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
         setState(() {
           nameController.text = document['name'] ?? '';
           addressController.text = document['address'] ?? '';
-          dobController.text = document['DOB'] ?? '';
+          if (document['DOB'] != null) {
+            dobController.text = document['DOB'];
+          } else {
+            dobController.clear();
+          }
           medicalHistoryController.text = document['medical_history'] ?? '';
           gravidaController.text = document['Gravida'].toString();
           paraController.text = document['Para'].toString();
           abortionController.text = document['Abortion'].toString();
           ancConsultation = document['ANC_consultation'] ?? false;
           relationController.text = document['relation'] ?? '';
-          currentPatientId = pid;
+          pidController.text = pid;
         });
       } else {
         clearFields();
@@ -221,6 +210,22 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     }
   }
 
+  void clearFields() {
+    setState(() {
+      pidController.clear();
+      nameController.clear();
+      addressController.clear();
+      dobController.clear();
+      medicalHistoryController.clear();
+      gravidaController.clear();
+      paraController.clear();
+      abortionController.clear();
+      ancConsultation = false;
+      relationController.clear();
+      currentPatientId = '';
+    });
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -231,7 +236,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
-        dobController.text = DateFormat('yyyy-MM-dd').format(selectedDate!);
+        dobController.text =
+            '${DateFormat('MMMM d, yyyy \'at\' h:mm:ss a').format(selectedDate!.toLocal())} UTC+5';
       });
     }
   }
@@ -278,18 +284,30 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   children: [
                     Expanded(
                       child: TextField(
+                        controller: pidController,
                         decoration: const InputDecoration(
-                          labelText: 'Enter Patient ID to Update',
+                          labelText: 'Patient ID',
                           border: OutlineInputBorder(),
                         ),
-                        onSubmitted: (pid) {
-                          populateFields(pid.trim());
-                        },
                       ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        String pid = pidController.text.trim();
+                        if (pid.isNotEmpty) {
+                          populateFields(pid);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please enter a Patient ID')),
+                          );
+                        }
+                      },
+                      child: const Text('Search'),
                     ),
                   ],
                 ),
-              if (isUpdating) const SizedBox(height: 20),
               const SizedBox(height: 20),
               TextField(
                 controller: nameController,
@@ -376,7 +394,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  String pid = pidController.text.trim().toLowerCase();
+                  String pid = pidController.text.trim();
                   String name = nameController.text.trim().toLowerCase();
                   String address = addressController.text.trim().toLowerCase();
                   String medicalHistory =
@@ -388,17 +406,17 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       int.tryParse(abortionController.text.trim()) ?? 0;
                   String relation =
                       relationController.text.trim().toLowerCase();
-
-                  if (selectedDate == null) {
+                  if (dobController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                           content: Text('Please select a Date of Birth')),
                     );
                     return;
                   }
-                  if (isUpdating && currentPatientId.isNotEmpty) {
+                  if (isUpdating && pid.isNotEmpty) {
                     // Update existing patient
-                    await _databaseService.addPatientData(
+                    await _databaseService.updateUserData(
+                      pid,
                       name,
                       address,
                       selectedDate!,
@@ -414,7 +432,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     );
                   } else {
                     // Add new patient
-                    String patientId = await _databaseService.addPatientData(
+                    String currentPatientId =
+                        await _databaseService.addPatientData(
                       name,
                       address,
                       selectedDate!,
@@ -429,11 +448,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                           content: Text(
-                              'Patient added successfully! ID: $patientId')),
+                              'Patient added successfully! ID: $currentPatientId')),
                     );
                   }
-
-                  clearFields();
                 },
                 child: Text(isUpdating ? 'Update Patient' : 'Add Patient'),
               ),
@@ -444,7 +461,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PreviousDeliveryPage(
-                        patientId: pidController.text.trim(),
+                        patientId: currentPatientId,
                       ),
                     ),
                   );
