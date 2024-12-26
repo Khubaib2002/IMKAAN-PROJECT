@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:imkaan/screens/maternity/update/deliveries.dart';
+import 'package:imkaan/screens/maternity/update/deliveryfiles.dart';
 import 'package:imkaan/screens/maternity/update/discharge/discharge.dart';
 import 'package:intl/intl.dart';
+import 'dart:developer';
 
 class DatabaseService {
   final CollectionReference patients =
       FirebaseFirestore.instance.collection('Patients');
-  final CollectionReference prevDeliveries =
-      FirebaseFirestore.instance.collection('Prev_Delivery');
+  // final CollectionReference prevDeliveries =
+  // FirebaseFirestore.instance.collection('Prev_Delivery');
   final CollectionReference discharges =
       FirebaseFirestore.instance.collection('DischargeInfo');
 
@@ -53,8 +54,11 @@ class DatabaseService {
       int abortion,
       bool ancConsultation,
       String relation) async {
+    log('This is a debug message.');
+
     String formattedDOB =
         '${DateFormat('MMMM d, yyyy \'at\' h:mm:ss a').format(dob.toLocal())} UTC+5';
+    log('This is a debug message.');
 
     return await patients.doc(pid).set({
       'name': name,
@@ -73,15 +77,24 @@ class DatabaseService {
     return await patients.doc(pid).get();
   }
 
+  // Get previous deliveries for a specific patient
   Stream<QuerySnapshot> getPreviousDeliveries(String patientId) {
-    return prevDeliveries.where('patient_id', isEqualTo: patientId).snapshots();
+    return patients
+        .doc(patientId)
+        .collection('Prev_Delivery') // Access the 'Prev_Delivery' subcollection
+        .snapshots();
   }
 
-  Future updatePreviousDelivery(String deliveryId, String patientId,
+  // Update a previous delivery for a specific patient
+  Future updatePreviousDelivery(String patientId, String deliveryId,
       DateTime year, String type, String location, bool outcome) async {
     String formattedYear = DateFormat('yyyy-MM-dd').format(year);
 
-    return await prevDeliveries.doc(deliveryId).set({
+    return await patients
+        .doc(patientId)
+        .collection('Prev_Delivery') // Access the 'Prev_Delivery' subcollection
+        .doc(deliveryId) // Update specific delivery document
+        .set({
       'del_id': deliveryId,
       'patient_id': patientId,
       'year': formattedYear,
@@ -91,11 +104,15 @@ class DatabaseService {
     });
   }
 
+  // Insert a new previous delivery for a specific patient
   Future insertPreviousDelivery(String patientId, DateTime year, String type,
       String location, bool outcome) async {
     String formattedYear = DateFormat('yyyy-MM-dd').format(year);
 
-    return await prevDeliveries.add({
+    return await patients
+        .doc(patientId)
+        .collection('Prev_Delivery') // Access the 'Prev_Delivery' subcollection
+        .add({
       'patient_id': patientId,
       'year': formattedYear,
       'type': type,
@@ -103,54 +120,82 @@ class DatabaseService {
       'outcome': outcome,
     });
   }
+  // Stream<QuerySnapshot> getPreviousDeliveries(String patientId) {
+  //   return prevDeliveries.where('patient_id', isEqualTo: patientId).snapshots();
+  // }
+  // Future updatePreviousDelivery(String deliveryId, String patientId,
+  //     DateTime year, String type, String location, bool outcome) async {
+  //   String formattedYear = DateFormat('yyyy-MM-dd').format(year);
 
-  // Get all Discharge Info
-  Future<void> addOrUpdateDischargeInfo(
-      String patientId, String dischargeId, Map<String, dynamic> data) async {
-    try {
-      await discharges
-          .doc(patientId)
-          .set({'discharge_id': dischargeId, ...data}, SetOptions(merge: true));
-    } catch (e) {
-      throw Exception('Error saving discharge info: $e');
-    }
-  }
+  //   return await prevDeliveries.doc(deliveryId).set({
+  //     'del_id': deliveryId,
+  //     'patient_id': patientId,
+  //     'year': formattedYear,
+  //     'type': type,
+  //     'location': location,
+  //     'outcome': outcome,
+  //   });
+  // }
+  // Future insertPreviousDelivery(String patientId, DateTime year, String type,
+  //     String location, bool outcome) async {
+  //   String formattedYear = DateFormat('yyyy-MM-dd').format(year);
 
-  // Add Newborn Vitals
-  Future<void> addNewbornVitals(
-      String patientId, String dischargeId, Map<String, dynamic> data) async {
-    try {
-      await discharges
-          .doc(patientId)
-          .collection('Newborn_Vitals')
-          .doc(dischargeId)
-          .set(data, SetOptions(merge: true));
-    } catch (e) {
-      throw Exception('Error saving newborn vitals: $e');
-    }
-  }
+  //   return await prevDeliveries.add({
+  //     'patient_id': patientId,
+  //     'year': formattedYear,
+  //     'type': type,
+  //     'location': location,
+  //     'outcome': outcome,
+  //   });
+  // }
 
-  // Add Procedure
-  Future<void> addProcedure(
-      String patientId, String dischargeId, Map<String, dynamic> data) async {
-    try {
-      await discharges
-          .doc(patientId)
-          .collection('Procedures')
-          .add(data); // Creates a new document with auto-generated ID
-    } catch (e) {
-      throw Exception('Error saving procedure: $e');
-    }
-  }
+  // // Get all Discharge Info
+  // Future<void> addOrUpdateDischargeInfo(
+  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
+  //   try {
+  //     await discharges
+  //         .doc(patientId)
+  //         .set({'discharge_id': dischargeId, ...data}, SetOptions(merge: true));
+  //   } catch (e) {
+  //     throw Exception('Error saving discharge info: $e');
+  //   }
+  // }
 
-  // Get Discharge Information
-  Future<DocumentSnapshot> getDischargeInfo(String patientId) async {
-    try {
-      return await discharges.doc(patientId).get();
-    } catch (e) {
-      throw Exception('Error retrieving discharge info: $e');
-    }
-  }
+  // // Add Newborn Vitals
+  // Future<void> addNewbornVitals(
+  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
+  //   try {
+  //     await discharges
+  //         .doc(patientId)
+  //         .collection('Newborn_Vitals')
+  //         .doc(dischargeId)
+  //         .set(data, SetOptions(merge: true));
+  //   } catch (e) {
+  //     throw Exception('Error saving newborn vitals: $e');
+  //   }
+  // }
+
+  // // Add Procedure
+  // Future<void> addProcedure(
+  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
+  //   try {
+  //     await discharges
+  //         .doc(patientId)
+  //         .collection('Procedures')
+  //         .add(data); // Creates a new document with auto-generated ID
+  //   } catch (e) {
+  //     throw Exception('Error saving procedure: $e');
+  //   }
+  // }
+
+  // // Get Discharge Information
+  // Future<DocumentSnapshot> getDischargeInfo(String patientId) async {
+  //   try {
+  //     return await discharges.doc(patientId).get();
+  //   } catch (e) {
+  //     throw Exception('Error retrieving discharge info: $e');
+  //   }
+  // }
 }
 
 class UpdateUserPage extends StatefulWidget {
@@ -188,16 +233,19 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
           addressController.text = document['address'] ?? '';
           if (document['DOB'] != null) {
             dobController.text = document['DOB'];
+            DateFormat format = DateFormat("MMMM d, yyyy 'at' h:mm:ss a z");
+            DateTime parsedDate = format.parse(dobController.text);
+            selectedDate = parsedDate;
           } else {
             dobController.clear();
           }
           medicalHistoryController.text = document['medical_history'] ?? '';
-          gravidaController.text = document['Gravida'].toString();
-          paraController.text = document['Para'].toString();
-          abortionController.text = document['Abortion'].toString();
+          gravidaController.text = document['Gravida']?.toString() ?? '';
+          paraController.text = document['Para']?.toString() ?? '';
+          abortionController.text = document['Abortion']?.toString() ?? '';
           ancConsultation = document['ANC_consultation'] ?? false;
           relationController.text = document['relation'] ?? '';
-          pidController.text = pid;
+          // pidController.text = pid;
         });
       } else {
         clearFields();
@@ -230,7 +278,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
+      firstDate: DateTime(1920),
       lastDate: DateTime.now(),
     );
     if (pickedDate != null && pickedDate != selectedDate) {
@@ -279,7 +327,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                 ],
               ),
               const SizedBox(height: 20),
-              if (isUpdating)
+              if (isUpdating) ...{
                 Row(
                   children: [
                     Expanded(
@@ -294,9 +342,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
-                        String pid = pidController.text.trim();
-                        if (pid.isNotEmpty) {
-                          populateFields(pid);
+                        currentPatientId = pidController.text.trim();
+                        if (currentPatientId.isNotEmpty) {
+                          populateFields(currentPatientId);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -308,13 +356,18 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     ),
                   ],
                 ),
+              },
               const SizedBox(height: 20),
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
+              StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
               TextField(
@@ -394,7 +447,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  String pid = pidController.text.trim();
                   String name = nameController.text.trim().toLowerCase();
                   String address = addressController.text.trim().toLowerCase();
                   String medicalHistory =
@@ -413,27 +465,39 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     );
                     return;
                   }
-                  if (isUpdating && pid.isNotEmpty) {
-                    // Update existing patient
-                    await _databaseService.updateUserData(
-                      pid,
-                      name,
-                      address,
-                      selectedDate!,
-                      medicalHistory,
-                      gravida,
-                      para,
-                      abortion,
-                      ancConsultation,
-                      relation,
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Patient data updated!')),
-                    );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: isUpdating
+                            ? Text('Updating patient data...')
+                            : Text('Adding new patient...')),
+                  );
+                  if (isUpdating && currentPatientId.isNotEmpty) {
+                    try {
+                      await _databaseService.updateUserData(
+                        currentPatientId,
+                        name,
+                        address,
+                        selectedDate!,
+                        medicalHistory,
+                        gravida,
+                        para,
+                        abortion,
+                        ancConsultation,
+                        relation,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Patient data updated!')),
+                      );
+                    } catch (e) {
+                      log('Error: $e'); // Log the error
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Failed to update patient data: $e')),
+                      );
+                    }
                   } else {
                     // Add new patient
-                    String currentPatientId =
-                        await _databaseService.addPatientData(
+                    currentPatientId = await _databaseService.addPatientData(
                       name,
                       address,
                       selectedDate!,
@@ -460,13 +524,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PreviousDeliveryPage(
+                      builder: (context) => DeliveryScreen(
                         patientId: currentPatientId,
                       ),
                     ),
                   );
                 },
-                child: const Text('Previous Delivery'),
+                child: const Text('Delivery Files'),
               ),
               const SizedBox(height: 10),
               ElevatedButton(
@@ -503,20 +567,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   );
                 },
                 child: const Text('Vaginal Examinations'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DischargeInformationPage(
-                        patientId: pidController.text.trim(),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Discharge Information'),
               ),
             ],
           ),

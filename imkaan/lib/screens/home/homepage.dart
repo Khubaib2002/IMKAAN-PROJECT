@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:imkaan/screens/admin.dart';
-import 'package:imkaan/screens/legal.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/mental.dart';
 import 'package:imkaan/screens/searchorupdate.dart';
 // import 'package:imkaan/screens/home/maternity.dart';
 import 'package:imkaan/services/auth.dart';
-import 'package:imkaan/services/db.dart';
+// import 'package:imkaan/services/db.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -185,7 +183,7 @@ class HomePage extends StatelessWidget {
                 shadows: [
                   Shadow(
                     blurRadius: 10.0,
-                    color: Colors.yellow.withOpacity(0.6),
+                    color: Colors.yellow,
                     offset: const Offset(2, 3),
                   ),
                 ],
