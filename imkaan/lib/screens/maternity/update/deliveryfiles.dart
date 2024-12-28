@@ -435,6 +435,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Or Update Delivery Files Information'),
+        shadowColor: Colors.amber[100],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -447,6 +448,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   'Enter new delivery file information here',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                const Divider(),
                 const SizedBox(height: 10),
                 TextField(
                   controller: filenoController,
@@ -901,11 +903,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   },
                   child: const Text('Save Discharge Information'),
                 ),
-                const Divider(),
+                const SizedBox(height: 20),
                 const Text(
                   'Previous Delivery Files',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                const Divider(),
                 StreamBuilder<QuerySnapshot>(
                   stream: _databaseService
                       .getPreviousDeliveryFiles(widget.patientId),
@@ -1154,607 +1157,670 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                           return StatefulBuilder(
                             builder: (context, setState) {
                               return Card(
-                                margin: const EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 20),
-                                    const Text(
-                                      'Edit the information and hit \'Update\' to update this delivery file',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['fileno'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'File no'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['admissiondate'],
-                                      readOnly: true,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Date of Admission',
-                                        border: OutlineInputBorder(),
-                                      ),
-                                      onTap: () => _selectDate(context,
+                                  margin: const EdgeInsets.all(10.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        const Text(
+                                          'Edit the information and hit \'Update\' to update this delivery file',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['fileno'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'File no'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
                                           controller:
-                                              controllers['admissiondate'] ??
+                                              controllers['admissiondate'],
+                                          readOnly: true,
+                                          decoration: const InputDecoration(
+                                            labelText: 'Date of Admission',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          onTap: () => _selectDate(context,
+                                              controller: controllers[
+                                                      'admissiondate'] ??
                                                   TextEditingController()),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['admissiontime'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Time of admission'),
-                                    ),
-
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Examination on Admission',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['weekofpreg'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Week of Pregnancy'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['fundalheight'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Fundal Height (cm)'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['fhr'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Fetal Heart Rate (b/m)'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    _buildDropdown(selectedfmupdate,
-                                        'Fetal Movement (FM)', fms, (value) {
-                                      setState(() {
-                                        selectedfmupdate = value ?? '';
-                                      });
-                                    }),
-                                    const SizedBox(height: 10),
-
-                                    TextField(
-                                      controller: controllers['lie'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Fetal Lie'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['weight'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Weight (kg)'),
-                                    ),
-                                    const SizedBox(height: 10),
-
-                                    TextField(
-                                      controller: controllers['bp'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'BP'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['pulse'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Pulse'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['temp'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Temperature'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['conjunctivitis'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Conjunctivitis'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['bloodgroup'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Blood Group'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['hcv'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'HCV'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['hbv'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'HBV'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['hb'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'HB'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Compaints/Diagnosis',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller:
-                                          controllers['compaintsdiagnosis'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Compaints/Diagnosis'),
-                                    ),
-
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Compaints/Diagnosis',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Vaginal Examination',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['effacement'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Effacement'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['consistency'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Consistency'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['dilation'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Dilation (cm)'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['presentingPart'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Presenting Part'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['engagement'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Engagement'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['pvbleeding'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'PV Bleeding'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['vagdate'],
-                                      readOnly: true,
-                                      decoration: const InputDecoration(
-                                        labelText:
-                                            'Date of Vaginal Examination',
-                                        border: OutlineInputBorder(),
-                                      ),
-                                      onTap: () => _selectDate(context,
-                                          controller: controllers['vagdate'] ??
-                                              TextEditingController()),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['vagtime'],
-                                      decoration: const InputDecoration(
-                                          labelText:
-                                              'Time of Vaginal Examination'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    _buildDropdown(selectedmembrance,
-                                        'Membrance', membrances, (value) {
-                                      setState(() {
-                                        selectedmembrance = value ?? '';
-                                      });
-                                    }),
-                                    const SizedBox(height: 10),
-                                    _buildDropdown(
-                                        selectedliqour, 'Liqour', liqours,
-                                        (value) {
-                                      setState(() {
-                                        selectedliqour = value ?? '';
-                                      });
-                                    }),
-                                    const SizedBox(height: 10),
-                                    const Divider(),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Discharge Information',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['dischargedate'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Date of Discharge'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['lengthOfStay'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Length of Stay'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['mode'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Mode'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller:
-                                          controllers['dischargeDoneBy'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Discharge Done By'),
-                                    ),
-                                    const Divider(),
-                                    const Text('Mother Information',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                    TextField(
-                                      controller: controllers['motherBP'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Blood Pressure'),
-                                    ),
-                                    TextField(
-                                      controller: controllers['motherTemp'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Temperature'),
-                                    ),
-                                    TextField(
-                                      controller: controllers['motherPulse'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Pulse Rate'),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['passedUrine'] ?? false,
-                                      label: 'Passed Urine',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['passedUrine'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['uterusContracted'] ??
-                                          false,
-                                      label: 'Uterus Contracted',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['uterusContracted'] =
-                                              val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value:
-                                          checkboxes['lochiaNormal'] ?? false,
-                                      label: 'Lochia Normal',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['lochiaNormal'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['vitaminA'] ?? false,
-                                      label: 'Vitamin A Given',
-                                      onChanged: (val) => setState(
-                                          () => checkboxes['vitaminA'] = val!),
-                                    ),
-                                    const Divider(),
-                                    const Text('Newborn Vitals',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                    // Newborn vitals
-                                    TextField(
-                                      controller: controllers['newbornTemp'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Temperature'),
-                                    ),
-                                    // Checkbox rows for Newborn info
-                                    buildCheckboxListTile(
-                                      value: checkboxes['newbornPassedStool'] ??
-                                          false,
-                                      label: 'Passed Stool',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['newbornPassedStool'] =
-                                              val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['newbornPassedUrine'] ??
-                                          false,
-                                      label: 'Passed Urine',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['newbornPassedUrine'] =
-                                              val!),
-                                    ),
-                                    _buildDropdown(
-                                        breastfeedingStatusupdate,
-                                        'Breast Feeding Status',
-                                        breastfeedingstatuses, (value) {
-                                      setState(() {
-                                        breastfeedingStatusupdate = value ?? '';
-                                      });
-                                    }),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['hepatitisBStatus'] ??
-                                          false,
-                                      label: 'Hepatitis B Status',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['hepatitisBStatus'] =
-                                              val!),
-                                    ),
-                                    const Divider(),
-                                    const Text('Health Education',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                    buildCheckboxListTile(
-                                      value:
-                                          checkboxes['postnatalCare'] ?? false,
-                                      label: 'Postnatal Care',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['postnatalCare'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value:
-                                          checkboxes['familyPlanning'] ?? false,
-                                      label: 'Family Planning',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['familyPlanning'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes[
-                                              'exclusivebreastfeeding'] ??
-                                          false,
-                                      label: 'Exclusive Breastfeeding',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['exclusivebreastfeeding'] =
-                                              val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value:
-                                          checkboxes['lowBirthWeight'] ?? false,
-                                      label: 'Low Birth Weight',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['lowBirthWeight'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['dangerSign'] ?? false,
-                                      label: 'Danger Sign',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['dangerSign'] = val!),
-                                    ),
-                                    TextField(
-                                      controller:
-                                          controllers['specialRecommendations'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'Special Recommendations'),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Text('Performed Procedure',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    _buildDropdown(
-                                        selectedProcedureupdate,
-                                        'Select Procedure',
-                                        procedures, (value) {
-                                      setState(() {
-                                        selectedProcedureupdate = value ?? '';
-                                      });
-                                    }),
-                                    const SizedBox(height: 20),
-                                    const Text('Diagnosis at Exit',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    // Dropdown for Diagnosis
-                                    _buildDropdown(selectedDiagnosisupdate,
-                                        'Select Diagnosis', diagnoses, (value) {
-                                      setState(() {
-                                        selectedDiagnosisupdate = value ?? '';
-                                      });
-                                    }),
-                                    const Divider(),
-                                    const Text('Treatment at Home',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 10),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['ferrousSulphate'] ??
-                                          false,
-                                      label: 'Ferrous Sulphate',
-                                      onChanged: (val) => setState(() =>
-                                          checkboxes['ferrousSulphate'] = val!),
-                                    ),
-                                    buildCheckboxListTile(
-                                      value: checkboxes['folicAcid'] ?? false,
-                                      label: 'Folic Acid',
-                                      onChanged: (val) => setState(
-                                          () => checkboxes['folicAcid'] = val!),
-                                    ),
-                                    TextField(
-                                      controller: controllers['othermeds'],
-                                      decoration: const InputDecoration(
-                                          labelText:
-                                              'Amount of All Medications Given'),
-                                    ),
-
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller:
-                                          controllers['consultationdate'],
-                                      readOnly: true,
-                                      decoration: const InputDecoration(
-                                        labelText:
-                                            'Post-Natal Consultation Date',
-                                        border: OutlineInputBorder(),
-                                      ),
-                                      onTap: () => _selectDate(context,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
                                           controller:
-                                              controllers['consultationdate'] ??
-                                                  TextEditingController()),
-                                    ),
-                                    const SizedBox(height: 10),
+                                              controllers['admissiontime'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Time of admission'),
+                                        ),
 
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await updateDischargeInfo(
-                                          widget.patientId,
-                                          docid,
-                                          controllers['fileno']?.text ?? '',
-                                          controllers['admissiondate']?.text ??
-                                              '',
-                                          controllers['admissiontime']?.text ??
-                                              '',
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Examination on Admission',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['weekofpreg'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Week of Pregnancy'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['fundalheight'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Fundal Height (cm)'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['fhr'],
+                                          decoration: const InputDecoration(
+                                              labelText:
+                                                  'Fetal Heart Rate (b/m)'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        _buildDropdown(
+                                            selectedfmupdate,
+                                            'Fetal Movement (FM)',
+                                            fms, (value) {
+                                          setState(() {
+                                            selectedfmupdate = value ?? '';
+                                          });
+                                        }),
+                                        const SizedBox(height: 10),
+
+                                        TextField(
+                                          controller: controllers['lie'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Fetal Lie'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['weight'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Weight (kg)'),
+                                        ),
+                                        const SizedBox(height: 10),
+
+                                        TextField(
+                                          controller: controllers['bp'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'BP'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['pulse'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Pulse'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['temp'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Temperature'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['conjunctivitis'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Conjunctivitis'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['bloodgroup'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Blood Group'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['hcv'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'HCV'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['hbv'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'HBV'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['hb'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'HB'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Compaints/Diagnosis',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['compaintsdiagnosis'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Compaints/Diagnosis'),
+                                        ),
+
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Compaints/Diagnosis',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Vaginal Examination',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['effacement'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Effacement'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['consistency'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Consistency'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['dilation'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Dilation (cm)'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['presentingPart'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Presenting Part'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['engagement'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Engagement'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['pvbleeding'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'PV Bleeding'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['vagdate'],
+                                          readOnly: true,
+                                          decoration: const InputDecoration(
+                                            labelText:
+                                                'Date of Vaginal Examination',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          onTap: () => _selectDate(context,
+                                              controller:
+                                                  controllers['vagdate'] ??
+                                                      TextEditingController()),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['vagtime'],
+                                          decoration: const InputDecoration(
+                                              labelText:
+                                                  'Time of Vaginal Examination'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        _buildDropdown(selectedmembrance,
+                                            'Membrance', membrances, (value) {
+                                          setState(() {
+                                            selectedmembrance = value ?? '';
+                                          });
+                                        }),
+                                        const SizedBox(height: 10),
+                                        _buildDropdown(
+                                            selectedliqour, 'Liqour', liqours,
+                                            (value) {
+                                          setState(() {
+                                            selectedliqour = value ?? '';
+                                          });
+                                        }),
+                                        const SizedBox(height: 10),
+                                        const Divider(),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Discharge Information',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['dischargedate'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Date of Discharge'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['lengthOfStay'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Length of Stay'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller: controllers['mode'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Mode'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['dischargeDoneBy'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Discharge Done By'),
+                                        ),
+                                        const Divider(),
+                                        const Text('Mother Information',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        TextField(
+                                          controller: controllers['motherBP'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Blood Pressure'),
+                                        ),
+                                        TextField(
+                                          controller: controllers['motherTemp'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Temperature'),
+                                        ),
+                                        TextField(
+                                          controller:
+                                              controllers['motherPulse'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Pulse Rate'),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes['passedUrine'] ??
+                                              false,
+                                          label: 'Passed Urine',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['passedUrine'] = val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['uterusContracted'] ??
+                                                  false,
+                                          label: 'Uterus Contracted',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['uterusContracted'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes['lochiaNormal'] ??
+                                              false,
+                                          label: 'Lochia Normal',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['lochiaNormal'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['vitaminA'] ?? false,
+                                          label: 'Vitamin A Given',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['vitaminA'] = val!),
+                                        ),
+                                        const Divider(),
+                                        const Text('Newborn Vitals',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        // Newborn vitals
+                                        TextField(
+                                          controller:
+                                              controllers['newbornTemp'],
+                                          decoration: const InputDecoration(
+                                              labelText: 'Temperature'),
+                                        ),
+                                        // Checkbox rows for Newborn info
+                                        buildCheckboxListTile(
+                                          value: checkboxes[
+                                                  'newbornPassedStool'] ??
+                                              false,
+                                          label: 'Passed Stool',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['newbornPassedStool'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes[
+                                                  'newbornPassedUrine'] ??
+                                              false,
+                                          label: 'Passed Urine',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['newbornPassedUrine'] =
+                                                  val!),
+                                        ),
+                                        _buildDropdown(
+                                            breastfeedingStatusupdate,
+                                            'Breast Feeding Status',
+                                            breastfeedingstatuses, (value) {
+                                          setState(() {
+                                            breastfeedingStatusupdate =
+                                                value ?? '';
+                                          });
+                                        }),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['hepatitisBStatus'] ??
+                                                  false,
+                                          label: 'Hepatitis B Status',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['hepatitisBStatus'] =
+                                                  val!),
+                                        ),
+                                        const Divider(),
+                                        const Text('Health Education',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        buildCheckboxListTile(
+                                          value: checkboxes['postnatalCare'] ??
+                                              false,
+                                          label: 'Postnatal Care',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['postnatalCare'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes['familyPlanning'] ??
+                                              false,
+                                          label: 'Family Planning',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['familyPlanning'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes[
+                                                  'exclusivebreastfeeding'] ??
+                                              false,
+                                          label: 'Exclusive Breastfeeding',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes[
+                                                      'exclusivebreastfeeding'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value: checkboxes['lowBirthWeight'] ??
+                                              false,
+                                          label: 'Low Birth Weight',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['lowBirthWeight'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['dangerSign'] ?? false,
+                                          label: 'Danger Sign',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['dangerSign'] = val!),
+                                        ),
+                                        TextField(
+                                          controller: controllers[
+                                              'specialRecommendations'],
+                                          decoration: const InputDecoration(
+                                              labelText:
+                                                  'Special Recommendations'),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        const Text('Performed Procedure',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                        _buildDropdown(
+                                            selectedProcedureupdate,
+                                            'Select Procedure',
+                                            procedures, (value) {
+                                          setState(() {
+                                            selectedProcedureupdate =
+                                                value ?? '';
+                                          });
+                                        }),
+                                        const SizedBox(height: 20),
+                                        const Text('Diagnosis at Exit',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                        // Dropdown for Diagnosis
+                                        _buildDropdown(
+                                            selectedDiagnosisupdate,
+                                            'Select Diagnosis',
+                                            diagnoses, (value) {
+                                          setState(() {
+                                            selectedDiagnosisupdate =
+                                                value ?? '';
+                                          });
+                                        }),
+                                        const Divider(),
+                                        const Text('Treatment at Home',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        const SizedBox(height: 10),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['ferrousSulphate'] ??
+                                                  false,
+                                          label: 'Ferrous Sulphate',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['ferrousSulphate'] =
+                                                  val!),
+                                        ),
+                                        buildCheckboxListTile(
+                                          value:
+                                              checkboxes['folicAcid'] ?? false,
+                                          label: 'Folic Acid',
+                                          onChanged: (val) => setState(() =>
+                                              checkboxes['folicAcid'] = val!),
+                                        ),
+                                        TextField(
+                                          controller: controllers['othermeds'],
+                                          decoration: const InputDecoration(
+                                              labelText:
+                                                  'Amount of All Medications Given'),
+                                        ),
+
+                                        const SizedBox(height: 10),
+                                        TextField(
+                                          controller:
+                                              controllers['consultationdate'],
+                                          readOnly: true,
+                                          decoration: const InputDecoration(
+                                            labelText:
+                                                'Post-Natal Consultation Date',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          onTap: () => _selectDate(context,
+                                              controller: controllers[
+                                                      'consultationdate'] ??
+                                                  TextEditingController()),
+                                        ),
+                                        const SizedBox(height: 10),
+
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            await updateDischargeInfo(
+                                              widget.patientId,
+                                              docid,
+                                              controllers['fileno']?.text ?? '',
+                                              controllers['admissiondate']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['admissiontime']
+                                                      ?.text ??
+                                                  '',
 // admission
-                                          controllers['weekofpreg']?.text ?? '',
-                                          controllers['fundalheight']?.text ??
-                                              '',
-                                          controllers['fhr']?.text ?? '',
-                                          selectedfmupdate,
-                                          controllers['lie']?.text ?? '',
-                                          controllers['weight']?.text ?? '',
-                                          controllers['bp']?.text ?? '',
-                                          controllers['pulse']?.text ?? '',
-                                          controllers['temp']?.text ?? '',
-                                          controllers['conjunctivitis']?.text ??
-                                              '',
-                                          controllers['bloodgroup']?.text ?? '',
-                                          controllers['hcv']?.text ?? '',
-                                          controllers['hbv']?.text ?? '',
-                                          controllers['hb']?.text ?? '',
-                                          controllers['compaintsdiagnosis']
-                                                  ?.text ??
-                                              '',
-                                          // vag
-                                          controllers['effacement']?.text ?? '',
-                                          controllers['consistency']?.text ??
-                                              '',
-                                          controllers['dilation']?.text ?? '',
-                                          controllers['presentingPart']?.text ??
-                                              '',
-                                          controllers['engagement']?.text ?? '',
-                                          controllers['pvbleeding']?.text ?? '',
-                                          controllers['vagdate']?.text ?? '',
-                                          controllers['vagtime']?.text ?? '',
-                                          selectedmembrance,
-                                          selectedliqour,
-                                          // discharge
-                                          controllers['dischargedate']?.text ??
-                                              '',
-                                          controllers['lengthOfStay']?.text ??
-                                              '',
-                                          controllers['mode']?.text ?? '',
-                                          controllers['dischargeDoneBy']
-                                                  ?.text ??
-                                              '',
-                                          controllers['motherBP']?.text ?? '',
-                                          controllers['motherTemp']?.text ?? '',
-                                          controllers['motherPulse']?.text ??
-                                              '',
-                                          (checkboxes['passedUrine'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['uterusContracted'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['lochiaNormal'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['vitaminA'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          controllers['specialRecommendations']
-                                                  ?.text ??
-                                              '',
-                                          selectedProcedureupdate,
-                                          selectedDiagnosisupdate,
-                                          (checkboxes['postnatalCare'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['ferrousSulphate'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['folicAcid'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          controllers['othermeds']?.text ?? '',
-                                          (checkboxes['familyPlanning'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['lowBirthWeight'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['dangerSign'] ?? false)
-                                              ? 'true'
-                                              : 'false',
-                                          controllers['newbornTemp']?.text ??
-                                              '',
+                                              controllers['weekofpreg']?.text ??
+                                                  '',
+                                              controllers['fundalheight']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['fhr']?.text ?? '',
+                                              selectedfmupdate,
+                                              controllers['lie']?.text ?? '',
+                                              controllers['weight']?.text ?? '',
+                                              controllers['bp']?.text ?? '',
+                                              controllers['pulse']?.text ?? '',
+                                              controllers['temp']?.text ?? '',
+                                              controllers['conjunctivitis']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['bloodgroup']?.text ??
+                                                  '',
+                                              controllers['hcv']?.text ?? '',
+                                              controllers['hbv']?.text ?? '',
+                                              controllers['hb']?.text ?? '',
+                                              controllers['compaintsdiagnosis']
+                                                      ?.text ??
+                                                  '',
+                                              // vag
+                                              controllers['effacement']?.text ??
+                                                  '',
+                                              controllers['consistency']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['dilation']?.text ??
+                                                  '',
+                                              controllers['presentingPart']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['engagement']?.text ??
+                                                  '',
+                                              controllers['pvbleeding']?.text ??
+                                                  '',
+                                              controllers['vagdate']?.text ??
+                                                  '',
+                                              controllers['vagtime']?.text ??
+                                                  '',
+                                              selectedmembrance,
+                                              selectedliqour,
+                                              // discharge
+                                              controllers['dischargedate']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['lengthOfStay']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['mode']?.text ?? '',
+                                              controllers['dischargeDoneBy']
+                                                      ?.text ??
+                                                  '',
+                                              controllers['motherBP']?.text ??
+                                                  '',
+                                              controllers['motherTemp']?.text ??
+                                                  '',
+                                              controllers['motherPulse']
+                                                      ?.text ??
+                                                  '',
+                                              (checkboxes['passedUrine'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['uterusContracted'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['lochiaNormal'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['vitaminA'] ?? false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              controllers['specialRecommendations']
+                                                      ?.text ??
+                                                  '',
+                                              selectedProcedureupdate,
+                                              selectedDiagnosisupdate,
+                                              (checkboxes['postnatalCare'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['ferrousSulphate'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['folicAcid'] ?? false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              controllers['othermeds']?.text ??
+                                                  '',
+                                              (checkboxes['familyPlanning'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['lowBirthWeight'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['dangerSign'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              controllers['newbornTemp']
+                                                      ?.text ??
+                                                  '',
 
-                                          (checkboxes['newbornPassedStool'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['newbornPassedUrine'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          (checkboxes['exclusivebreastfeeding'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          breastfeedingStatusupdate,
-                                          (checkboxes['hepatitisBStatus'] ??
-                                                  false)
-                                              ? 'true'
-                                              : 'false',
-                                          controllers['consultationdate']
-                                                  ?.text ??
-                                              '',
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'Previous Delivery File Updated Successfully!')),
-                                        );
-                                      },
-                                      child: const Text('Update Delivery'),
+                                              (checkboxes['newbornPassedStool'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['newbornPassedUrine'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              (checkboxes['exclusivebreastfeeding'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              breastfeedingStatusupdate,
+                                              (checkboxes['hepatitisBStatus'] ??
+                                                      false)
+                                                  ? 'true'
+                                                  : 'false',
+                                              controllers['consultationdate']
+                                                      ?.text ??
+                                                  '',
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Previous Delivery File Updated Successfully!')),
+                                            );
+                                          },
+                                          child: const Text('Update Delivery'),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
+                                  ));
                             },
                           );
                         }).toList(),

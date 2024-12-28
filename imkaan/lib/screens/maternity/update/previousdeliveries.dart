@@ -254,7 +254,6 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                     return Column(
                       children: snapshot.data!.docs.map<Widget>((document) {
                         docid = document.id;
-                        final data = document.data() as Map<String, dynamic>;
                         return Card(
                           child: ListTile(
                             title: Text(document['Date of Delivery']),

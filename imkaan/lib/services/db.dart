@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:imkaan/screens/maternity/update/anc/anc.dart';
 import 'package:imkaan/screens/maternity/update/previousdeliveries.dart';
-import 'package:imkaan/screens/maternity/update/deliveryfiles.dart';
-import 'package:imkaan/screens/maternity/update/discharge.dart';
+import '../screens/maternity/update/deliveryfiles.dart';
 import 'package:imkaan/screens/maternity/update/medforms.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
@@ -122,82 +121,6 @@ class DatabaseService {
       'outcome': outcome,
     });
   }
-  // Stream<QuerySnapshot> getPreviousDeliveries(String patientId) {
-  //   return prevDeliveries.where('patient_id', isEqualTo: patientId).snapshots();
-  // }
-  // Future updatePreviousDelivery(String deliveryId, String patientId,
-  //     DateTime year, String type, String location, bool outcome) async {
-  //   String formattedYear = DateFormat('yyyy-MM-dd').format(year);
-
-  //   return await prevDeliveries.doc(deliveryId).set({
-  //     'del_id': deliveryId,
-  //     'patient_id': patientId,
-  //     'year': formattedYear,
-  //     'type': type,
-  //     'location': location,
-  //     'outcome': outcome,
-  //   });
-  // }
-  // Future insertPreviousDelivery(String patientId, DateTime year, String type,
-  //     String location, bool outcome) async {
-  //   String formattedYear = DateFormat('yyyy-MM-dd').format(year);
-
-  //   return await prevDeliveries.add({
-  //     'patient_id': patientId,
-  //     'year': formattedYear,
-  //     'type': type,
-  //     'location': location,
-  //     'outcome': outcome,
-  //   });
-  // }
-
-  // // Get all Discharge Info
-  // Future<void> addOrUpdateDischargeInfo(
-  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
-  //   try {
-  //     await discharges
-  //         .doc(patientId)
-  //         .set({'discharge_id': dischargeId, ...data}, SetOptions(merge: true));
-  //   } catch (e) {
-  //     throw Exception('Error saving discharge info: $e');
-  //   }
-  // }
-
-  // // Add Newborn Vitals
-  // Future<void> addNewbornVitals(
-  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
-  //   try {
-  //     await discharges
-  //         .doc(patientId)
-  //         .collection('Newborn_Vitals')
-  //         .doc(dischargeId)
-  //         .set(data, SetOptions(merge: true));
-  //   } catch (e) {
-  //     throw Exception('Error saving newborn vitals: $e');
-  //   }
-  // }
-
-  // // Add Procedure
-  // Future<void> addProcedure(
-  //     String patientId, String dischargeId, Map<String, dynamic> data) async {
-  //   try {
-  //     await discharges
-  //         .doc(patientId)
-  //         .collection('Procedures')
-  //         .add(data); // Creates a new document with auto-generated ID
-  //   } catch (e) {
-  //     throw Exception('Error saving procedure: $e');
-  //   }
-  // }
-
-  // // Get Discharge Information
-  // Future<DocumentSnapshot> getDischargeInfo(String patientId) async {
-  //   try {
-  //     return await discharges.doc(patientId).get();
-  //   } catch (e) {
-  //     throw Exception('Error retrieving discharge info: $e');
-  //   }
-  // }
 }
 
 class UpdateUserPage extends StatefulWidget {
@@ -584,54 +507,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// class MedicalFormsPage extends StatelessWidget {
-//   const MedicalFormsPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Medical Forms'),
-//       ),
-//       body: const Center(
-//         child: Text('Medical Forms Information'),
-//       ),
-//     );
-//   }
-// }
-
-class CardInfoPage extends StatelessWidget {
-  const CardInfoPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Card Info'),
-      ),
-      body: const Center(
-        child: Text('Card Info Details'),
-      ),
-    );
-  }
-}
-
-class VaginalExaminationsPage extends StatelessWidget {
-  const VaginalExaminationsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vaginal Examinations'),
-      ),
-      body: const Center(
-        child: Text('Vaginal Examinations Information'),
       ),
     );
   }
