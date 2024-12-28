@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:imkaan/screens/maternity/previousdeliveries.dart';
 import 'package:imkaan/screens/maternity/update/deliveryfiles.dart';
 import 'package:imkaan/screens/maternity/update/discharge/discharge.dart';
+import 'package:imkaan/screens/maternity/update/medforms.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
 
@@ -552,7 +553,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const MedicalFormsPage()),
+                        builder: (context) =>
+                            MedicalForm(patientId: currentPatientId)),
                   );
                 },
                 child: const Text('Medical Forms'),
@@ -579,21 +581,21 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   }
 }
 
-class MedicalFormsPage extends StatelessWidget {
-  const MedicalFormsPage({super.key});
+// class MedicalFormsPage extends StatelessWidget {
+//   const MedicalFormsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Medical Forms'),
-      ),
-      body: const Center(
-        child: Text('Medical Forms Information'),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Medical Forms'),
+//       ),
+//       body: const Center(
+//         child: Text('Medical Forms Information'),
+//       ),
+//     );
+//   }
+// }
 
 class CardInfoPage extends StatelessWidget {
   const CardInfoPage({super.key});
