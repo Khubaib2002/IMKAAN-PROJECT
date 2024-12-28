@@ -351,7 +351,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text(
-                                    'Please enter all details to add a new patient')),
+                                    'Please enter valid ID to search patient')),
                           );
                         }
                       },
@@ -463,8 +463,10 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       relationController.text.trim().toLowerCase();
                   if (dobController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please select a Date of Birth')),
+                      SnackBar(
+                          content: Text(!isUpdating
+                              ? 'Please enter all details to add a new patient'
+                              : 'Please enter all details to update patient information')),
                     );
                     return;
                   }

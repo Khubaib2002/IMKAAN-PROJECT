@@ -208,6 +208,19 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.patientId.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Medical Records'),
+        ),
+        body: const Center(
+          child: Text(
+            'Please select a patient to add or update ANC Cards.',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Antenatal, Labor, and Delivery Card'),

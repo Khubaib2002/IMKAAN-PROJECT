@@ -127,11 +127,11 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
     if (widget.patientId.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Delivery Files'),
+          title: const Text('Medical Records'),
         ),
         body: const Center(
           child: Text(
-            'Please select a patient or add a patient to add or update previous deliveries information.',
+            'Please select a patient to add or update previous deliveries.',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
