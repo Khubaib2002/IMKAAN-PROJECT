@@ -22,8 +22,10 @@ class _ANCVisitsState extends State<ANCVisits> {
   final TextEditingController fundalHeightController = TextEditingController();
   final TextEditingController fetalHeartBeatController =
       TextEditingController();
-  final TextEditingController positionController = TextEditingController();
-  final TextEditingController presentationController = TextEditingController();
+  final TextEditingController ConjunctivitisController =
+      TextEditingController();
+  final TextEditingController OedemaController = TextEditingController();
+
   final TextEditingController otherComplaintsController =
       TextEditingController();
   final TextEditingController haemoglobinController =
@@ -43,6 +45,13 @@ class _ANCVisitsState extends State<ANCVisits> {
   final TextEditingController nextAppointmentController =
       TextEditingController();
 
+  String fetalmovement = '';
+  final List<String> fetalmovements = ['Positive', 'Negative'];
+  String position = '';
+  final List<String> positions = ['Longitudinal', 'Transverse', 'Oblique'];
+  String presentation = '';
+  final List<String> presentations = ['Cephalic', 'Breech'];
+
   bool isUpdating = false;
   String currentVisitId = '';
 
@@ -53,8 +62,11 @@ class _ANCVisitsState extends State<ANCVisits> {
     bloodPressureController.clear();
     fundalHeightController.clear();
     fetalHeartBeatController.clear();
-    positionController.clear();
-    presentationController.clear();
+    fetalmovement = '';
+    position = '';
+    presentation = '';
+    ConjunctivitisController.clear();
+    OedemaController.clear();
     otherComplaintsController.clear();
     haemoglobinController.clear();
     antihcvController.clear();
@@ -102,8 +114,11 @@ class _ANCVisitsState extends State<ANCVisits> {
           'Blood Pressure': bloodPressureController.text,
           'Fundal Height': fundalHeightController.text,
           'Fetal Heart Beat': fetalHeartBeatController.text,
-          'Position': positionController.text,
-          'Presentation': presentationController.text,
+          'Fetal Movement': fetalmovement,
+          'Position': position,
+          'Presentation': presentation,
+          'Conjunctivitis': ConjunctivitisController.text,
+          'Oedema': OedemaController.text,
           'Other Complaints': otherComplaintsController.text,
           'Haemoglobin': haemoglobinController.text,
           'AntihCV': antihcvController.text,
@@ -136,8 +151,11 @@ class _ANCVisitsState extends State<ANCVisits> {
           'Blood Pressure': bloodPressureController.text,
           'Fundal Height': fundalHeightController.text,
           'Fetal Heart Beat': fetalHeartBeatController.text,
-          'Position': positionController.text,
-          'Presentation': presentationController.text,
+          'Fetal Movement': fetalmovement,
+          'Position': position,
+          'Presentation': presentation,
+          'Conjunctivitis': ConjunctivitisController.text,
+          'Oedema': OedemaController.text,
           'Other Complaints': otherComplaintsController.text,
           'Haemoglobin': haemoglobinController.text,
           'AntihCV': antihcvController.text,
@@ -158,7 +176,6 @@ class _ANCVisitsState extends State<ANCVisits> {
         );
       }
 
-      clearFields();
       setState(() {
         isUpdating = false;
       });
@@ -270,22 +287,44 @@ class _ANCVisitsState extends State<ANCVisits> {
             const SizedBox(height: 10),
             TextField(
               controller: fundalHeightController,
-              decoration: const InputDecoration(labelText: 'Fundal Height'),
+              decoration:
+                  const InputDecoration(labelText: 'Fundal Height (cm)'),
             ),
             const SizedBox(height: 10),
             TextField(
               controller: fetalHeartBeatController,
-              decoration: const InputDecoration(labelText: 'Fetal Heart Beat'),
+              decoration: const InputDecoration(
+                  labelText: 'Fetal Heart Beat (beats/minutes)'),
+            ),
+            const SizedBox(height: 10),
+            _buildDropdown(fetalmovement, 'Fetal Movements', fetalmovements,
+                (value) {
+              setState(() {
+                fetalmovement = value ?? '';
+              });
+            }),
+            const SizedBox(height: 10),
+            _buildDropdown(position, 'Position', positions, (value) {
+              setState(() {
+                position = value ?? '';
+              });
+            }),
+            const SizedBox(height: 10),
+            _buildDropdown(presentation, 'Presentation', presentations,
+                (value) {
+              setState(() {
+                presentation = value ?? '';
+              });
+            }),
+            const SizedBox(height: 10),
+            TextField(
+              controller: ConjunctivitisController,
+              decoration: const InputDecoration(labelText: 'Conjunctivita'),
             ),
             const SizedBox(height: 10),
             TextField(
-              controller: positionController,
-              decoration: const InputDecoration(labelText: 'Position'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: presentationController,
-              decoration: const InputDecoration(labelText: 'Presentation'),
+              controller: OedemaController,
+              decoration: const InputDecoration(labelText: 'Oedema'),
             ),
             const SizedBox(height: 10),
             TextField(
@@ -414,43 +453,108 @@ class _ANCVisitsState extends State<ANCVisits> {
                               icon: const Icon(Icons.edit),
                               onPressed: () {
                                 setState(() {
-                                  toggleMode(true);
                                   currentVisitId = doc.id;
-                                  dateController.text = data['Date'];
+                                  dateController.text = data.containsKey('Date')
+                                      ? data['Date']
+                                      : '';
                                   gestationalAgeController.text =
-                                      data['Gestational Age'];
-                                  weightController.text = data['Weight'];
+                                      data.containsKey('Gestational Age')
+                                          ? data['Gestational Age']
+                                          : '';
+                                  weightController.text =
+                                      data.containsKey('Weight')
+                                          ? data['Weight']
+                                          : '';
                                   bloodPressureController.text =
-                                      data['Blood Pressure'];
+                                      data.containsKey('Blood Pressure')
+                                          ? data['Blood Pressure']
+                                          : '';
                                   fundalHeightController.text =
-                                      data['Fundal Height'];
+                                      data.containsKey('Fundal Height')
+                                          ? data['Fundal Height']
+                                          : '';
                                   fetalHeartBeatController.text =
-                                      data['Fetal Heart Beat'];
-                                  positionController.text = data['Position'];
-                                  presentationController.text =
-                                      data['Presentation'];
+                                      data.containsKey('Fetal Heart Beat')
+                                          ? data['Fetal Heart Beat']
+                                          : '';
+                                  fetalmovement =
+                                      data.containsKey('Fetal Movement')
+                                          ? data['Fetal Movement']
+                                          : '';
+                                  position = data.containsKey('Position')
+                                      ? data['Position']
+                                      : '';
+                                  presentation =
+                                      data.containsKey('Presentation')
+                                          ? data['Presentation']
+                                          : '';
+                                  ConjunctivitisController.text =
+                                      data.containsKey('Conjunctivitis')
+                                          ? data['Conjunctivitis']
+                                          : '';
+                                  OedemaController.text =
+                                      data.containsKey('Oedema')
+                                          ? data['Oedema']
+                                          : '';
                                   otherComplaintsController.text =
-                                      data['Other Complaints'];
+                                      data.containsKey('Other Complaints')
+                                          ? data['Other Complaints']
+                                          : '';
                                   haemoglobinController.text =
-                                      data['Haemoglobin']; // lab
-                                  antihcvController.text = data['AntihCV'];
-                                  hbsagController.text = data['HBSAG'];
-                                  pregtestController.text = data['Pregtest'];
+                                      data.containsKey('Haemoglobin')
+                                          ? data['Haemoglobin']
+                                          : '';
+                                  // lab
+                                  antihcvController.text =
+                                      data.containsKey('AntihCV')
+                                          ? data['AntihCV']
+                                          : '';
+                                  hbsagController.text =
+                                      data.containsKey('HBSAG')
+                                          ? data['HBSAG']
+                                          : '';
+                                  pregtestController.text =
+                                      data.containsKey('Pregtest')
+                                          ? data['Pregtest']
+                                          : '';
                                   urineanalysisController.text =
-                                      data['Urine Analysis'];
+                                      data.containsKey('Urine Analysis')
+                                          ? data['Urine Analysis']
+                                          : '';
                                   bloodgroupController.text =
-                                      data['Blood Group'];
-                                  othertestController.text = data['Other Test'];
-                                  ferrousfolicController.text = data[
-                                      'Ferrous Sulphate/Folic Acid']; // meds
+                                      data.containsKey('Blood Group')
+                                          ? data['Blood Group']
+                                          : '';
+                                  othertestController.text =
+                                      data.containsKey('Other Test')
+                                          ? data['Other Test']
+                                          : '';
+                                  ferrousfolicController.text =
+                                      data.containsKey(
+                                              'Ferrous Sulphate/Folic Acid')
+                                          ? data['Ferrous Sulphate/Folic Acid']
+                                          : ''; // meds
                                   albendazoleController.text =
-                                      data['Albendazole'];
+                                      data.containsKey('Albendazole')
+                                          ? data['Albendazole']
+                                          : '';
                                   utitreatmentController.text =
-                                      data['Uti Treatment'];
-                                  vitamincController.text = data['Vitamin C'];
-                                  othermedsController.text = data['Other Meds'];
+                                      data.containsKey('Uti Treatment')
+                                          ? data['Uti Treatment']
+                                          : '';
+                                  vitamincController.text =
+                                      data.containsKey('Vitamin C')
+                                          ? data['Vitamin C']
+                                          : '';
+                                  othermedsController.text =
+                                      data.containsKey('Other Meds')
+                                          ? data['Other Meds']
+                                          : '';
                                   nextAppointmentController.text =
-                                      data['Next Appointment'];
+                                      data.containsKey('Next Appointment')
+                                          ? data['Next Appointment']
+                                          : '';
+                                  toggleMode(true);
                                 });
                               },
                             ),
@@ -473,4 +577,24 @@ class _ANCVisitsState extends State<ANCVisits> {
       ),
     );
   }
+}
+
+Widget _buildDropdown(String selectedValue, String label, List<String> items,
+    Function onChanged) {
+  return DropdownButtonFormField<String>(
+    value: selectedValue.isEmpty ? null : selectedValue,
+    items: items
+        .map((item) => DropdownMenuItem(
+              value: item,
+              child: Text(item),
+            ))
+        .toList(),
+    onChanged: (value) {
+      onChanged(value);
+    },
+    decoration: InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+    ),
+  );
 }

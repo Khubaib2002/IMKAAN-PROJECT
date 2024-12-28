@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:imkaan/screens/maternity/search/ancdetailed.dart';
 import 'package:rxdart/rxdart.dart';
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SearchPatientPage extends StatefulWidget {
   const SearchPatientPage({super.key});
@@ -36,8 +39,8 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
 
       final patientIdQuery = FirebaseFirestore.instance
           .collection('Patients')
-          .where('Patient_id', isGreaterThanOrEqualTo: searchKey)
-          .where('Patient_id', isLessThan: searchKey + '\uf8ff')
+          .where(FieldPath.documentId, isGreaterThanOrEqualTo: searchKey)
+          .where(FieldPath.documentId, isLessThan: searchKey + '\uf8ff')
           .snapshots();
 
       // Combine the results of the three queries
@@ -59,31 +62,20 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
     }
   }
 
-  Stream<QuerySnapshot> _searchDeliveries() {
-    if (searchKey.isEmpty) {
-      return FirebaseFirestore.instance.collection('Prev_Delivery').snapshots();
-    }
-
-    return FirebaseFirestore.instance
-        .collection('Prev_Delivery')
-        .where('year', isEqualTo: searchKey)
-        .snapshots();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Patient and Delivery Viewer'),
+        title: const Text('Search Patients'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                labelText: 'Search by Name, ID, or Year',
+                labelText: 'Search by Name or ID',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -92,28 +84,55 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
                 });
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Expanded(
-              child: DefaultTabController(
-                length: 2,
-                child: Column(
-                  children: [
-                    const TabBar(
-                      tabs: [
-                        Tab(text: 'Patients'),
-                        Tab(text: 'Deliveries'),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          _buildPatientList(),
-                          _buildDeliveryList(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              child: StreamBuilder<List<DocumentSnapshot>>(
+                stream: _searchPatients(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No Patients Found'));
+                  }
+
+                  return ListView(
+                    children: snapshot.data!.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>?;
+                      if (data == null) return const SizedBox.shrink();
+
+                      final name = data['name'] ?? data['Name'] ?? 'Unknown';
+                      final patientId = doc.id;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PatientDetailTabsScreen(
+                                patientId: doc.id,
+                                patientName: name,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.all(10.0),
+                          child: ListTile(
+                            title: Text(name,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text("ID: $patientId"),
+                            leading: CircleAvatar(
+                              child: Text(name[0].toUpperCase(),
+                                  style: TextStyle(fontSize: 20.0)),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
               ),
             ),
           ],
@@ -121,135 +140,373 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
       ),
     );
   }
-
-  Widget _buildPatientList() {
-    return StreamBuilder<List<DocumentSnapshot>>(
-      stream: _searchPatients(), // Replace with your stream function
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text('No Patients Found'),
-          );
-        }
-
-        return ListView(
-          children: snapshot.data!.map((doc) {
-            final data = doc.data()
-                as Map<String, dynamic>?; // Safely cast document data
-            if (data == null) return const SizedBox.shrink();
-
-            // Safely access fields with null checks
-            final name = data['name'] ?? data['Name'] ?? 'Unknown';
-            final fileNo = data['file_no'] ?? 'N/A';
-            final patientId = data['Patient_1'] ?? 'N/A';
-
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PatientDetailScreen(
-                      patientData: data,
-                    ),
-                  ),
-                );
-              },
-              child: Card(
-                margin: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  title: Text(name),
-                  subtitle: Text("File Number: $fileNo"),
-                  trailing: Text("ID: $patientId"),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildDeliveryList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _searchDeliveries(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(
-            child: Text('No Deliveries Found'),
-          );
-        }
-
-        return ListView(
-          children: snapshot.data!.docs.map((doc) {
-            final data = doc.data()
-                as Map<String, dynamic>?; // Safely cast document data
-            if (data == null) return const SizedBox.shrink();
-
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DeliveryDetailScreen(
-                      deliveryData: data,
-                    ),
-                  ),
-                );
-              },
-              child: Card(
-                margin: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  title: Text("Year: ${data['year'] ?? 'Unknown'}"),
-                  subtitle: Text("Type: ${data['type'] ?? 'Unknown'}"),
-                  trailing: Text("Location: ${data['location'] ?? 'Unknown'}"),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
 }
 
-class PatientDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> patientData;
+class PatientDetailTabsScreen extends StatelessWidget {
+  final String patientId;
+  final String patientName;
 
-  const PatientDetailScreen({super.key, required this.patientData});
+  const PatientDetailTabsScreen({
+    Key? key,
+    required this.patientId,
+    required this.patientName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Patient Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: patientData.entries.map((entry) {
-            return ListTile(
-              title: Text(entry.key),
-              subtitle: Text(entry.value?.toString() ?? 'N/A'),
-            );
-          }).toList(),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Details - $patientName',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Delivery Files'),
+              Tab(text: 'Previous Deliveries'),
+              Tab(text: 'Medical Forms'),
+              Tab(text: 'ANC Cards'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            DeliveryFilesTab(patientId: patientId),
+            PreviousDeliveriesTab(patientId: patientId),
+            MedicalFormsTab(patientId: patientId),
+            ANCCardsTab(patientId: patientId),
+          ],
         ),
       ),
     );
   }
 }
 
-class DeliveryDetailScreen extends StatelessWidget {
+class DeliveryFilesTab extends StatefulWidget {
+  final String patientId;
+  const DeliveryFilesTab({super.key, required this.patientId});
+
+  @override
+  State<DeliveryFilesTab> createState() => _DeliveryFilesTabState();
+}
+
+class _DeliveryFilesTabState extends State<DeliveryFilesTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text('Delivery Files',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Patients')
+                  .doc(widget.patientId)
+                  .collection('deliveryfiles')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                      child: Text('No Delivery Files Found',
+                          style: TextStyle(fontSize: 16.0)));
+                }
+                return ListView(
+                  children: snapshot.data!.docs.map<Widget>((doc) {
+                    final data = doc.data() as Map<String, dynamic>?;
+                    if (data == null) return const SizedBox.shrink();
+
+                    final admissionDate = data['admissiondate'] ?? 'Unknown';
+                    final diagnosis = data['selecteddiagnosis'] ?? 'N/A';
+                    final procedure = data['selectedprocedure'] ?? 'N/A';
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailedDeliveryScreen(
+                                deliveryData: data,
+                              ),
+                            ));
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ListTile(
+                          title: Text("Admission Date: $admissionDate",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text("Diagnosis: $diagnosis"),
+                          trailing: Text("Procedure: $procedure"),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PreviousDeliveriesTab extends StatefulWidget {
+  final String patientId;
+  const PreviousDeliveriesTab({super.key, required this.patientId});
+
+  @override
+  State<PreviousDeliveriesTab> createState() => _PreviousDeliveriesTabState();
+}
+
+class _PreviousDeliveriesTabState extends State<PreviousDeliveriesTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text('Previous Deliveries',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Patients')
+                  .doc(widget.patientId)
+                  .collection('prevdeliveries')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                      child: Text('No Previous Deliveries Found'));
+                }
+                return ListView(
+                  children: snapshot.data!.docs.map<Widget>((doc) {
+                    final data = doc.data() as Map<String, dynamic>?;
+                    if (data == null) return const SizedBox.shrink();
+
+                    final date = data['Date of Delivery'] ?? 'Unknown';
+                    final type = data['Type'] ?? 'N/A';
+                    final location = data['Location'] ?? 'N/A';
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PreviousDeliveriesDetailedScreen(
+                              deliveryData: data,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Text("Date of Delivery: $date",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text("Type/Mode: $type"),
+                          trailing: Text("Location: $location"),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MedicalFormsTab extends StatefulWidget {
+  final String patientId;
+  const MedicalFormsTab({super.key, required this.patientId});
+
+  @override
+  State<MedicalFormsTab> createState() => _MedicalFormsTabState();
+}
+
+class _MedicalFormsTabState extends State<MedicalFormsTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text('Medical Forms',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Patients')
+                  .doc(widget.patientId)
+                  .collection('medicalRecords')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No Medical Forms Found'));
+                }
+                return ListView(
+                  children: snapshot.data!.docs.map<Widget>((doc) {
+                    final data = doc.data() as Map<String, dynamic>?;
+                    if (data == null) return const SizedBox.shrink();
+
+                    final date = data['Date'] ?? 'Unknown';
+                    final diagnosis = data['Diagnosis'] ?? 'N/A';
+                    final fileno = data['fileno'] ?? 'N/A';
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MedicalFormsDetailedScreen(
+                              medicalFormData: data,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Text("File no: $fileno",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text("Date $date"),
+                          trailing: Text("Diagnosis: $diagnosis"),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ANCCardsTab extends StatefulWidget {
+  final String patientId;
+  const ANCCardsTab({super.key, required this.patientId});
+
+  @override
+  State<ANCCardsTab> createState() => _ANCCardsTab();
+}
+
+class _ANCCardsTab extends State<ANCCardsTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text('Antenatal, Labor, and Delivery Cards',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Patients')
+                  .doc(widget.patientId)
+                  .collection('AntenatalRecords')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No ANC Cards Found'));
+                }
+                return ListView(
+                  children: snapshot.data!.docs.map<Widget>((doc) {
+                    final data = doc.data() as Map<String, dynamic>?;
+                    if (data == null) return const SizedBox.shrink();
+
+                    final ancregno = data['ANC Reg No'] ?? 'Unknown';
+                    final date = data['Date'] ?? 'N/A';
+                    final time = data['Time'] ?? 'N/A';
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ANCDetailedScreen(
+                                  ancData: data,
+                                  patientId: widget.patientId,
+                                  cardId: doc.id)),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Text("ANC Reg No: $ancregno",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text("Date: $date"),
+                          trailing: Text("Time: $time"),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DetailedDeliveryScreen extends StatelessWidget {
   final Map<String, dynamic> deliveryData;
 
-  const DeliveryDetailScreen({super.key, required this.deliveryData});
+  const DetailedDeliveryScreen({Key? key, required this.deliveryData})
+      : super(key: key);
+
+  Widget buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -257,17 +514,505 @@ class DeliveryDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Delivery Details'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: deliveryData.entries.map((entry) {
-            return ListTile(
-              title: Text(entry.key),
-              subtitle: Text(entry.value?.toString() ?? 'N/A'),
-            );
-          }).toList(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Delivery Information',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            const Divider(),
+            buildInfoTile(
+                'Admission Date', deliveryData['admissiondate'] ?? ''),
+            buildInfoTile('Blood Group', deliveryData['bloodgroup'] ?? ''),
+            buildInfoTile('Blood Pressure', deliveryData['bp'] ?? ''),
+            buildInfoTile(
+                'Diagnosis', deliveryData['compaintsdiagnosis'] ?? ''),
+            buildInfoTile('Fundal Height', deliveryData['fundalheight'] ?? ''),
+            buildInfoTile('FHR', deliveryData['fhr'] ?? ''),
+            buildInfoTile(
+                'Discharge Date', deliveryData['dischargeDate'] ?? ''),
+            buildInfoTile(
+                'Discharge Done By', deliveryData['dischargeDoneBy'] ?? ''),
+            buildInfoTile('Mode of Delivery', deliveryData['mode'] ?? ''),
+            buildInfoTile('Mother\'s BP', deliveryData['motherBP'] ?? ''),
+            buildInfoTile('Mother\'s Pulse', deliveryData['motherPulse'] ?? ''),
+            buildInfoTile(
+                'Mother\'s Temperature', deliveryData['motherTemp'] ?? ''),
+            buildInfoTile('Diagnosis', deliveryData['selectedDiagnosis'] ?? ''),
+            buildInfoTile('Procedure', deliveryData['selectedProcedure'] ?? ''),
+            buildInfoTile('Special Recommendations',
+                deliveryData['specialRecommendations'] ?? ''),
+            buildInfoTile('Length of Stay', deliveryData['lengthOfStay'] ?? ''),
+            buildInfoTile('Engagement', deliveryData['engagement'] ?? ''),
+            buildInfoTile('Dilation (cm)', deliveryData['dilation_cm'] ?? ''),
+            buildInfoTile('Effacement', deliveryData['effacement'] ?? ''),
+            buildInfoTile(
+                'Presenting Part', deliveryData['presentingPart'] ?? ''),
+            buildInfoTile('Lie', deliveryData['lie'] ?? ''),
+            buildInfoTile('Weight', deliveryData['weight'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Postnatal Care',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            const Divider(),
+            buildInfoTile('Exclusive Breastfeeding',
+                deliveryData['exclusivebreastfeeding'] ?? ''),
+            buildInfoTile(
+                'Postnatal Care Provided', deliveryData['postnatalCare'] ?? ''),
+            buildInfoTile('Lochia Normal', deliveryData['lochiaNormal'] ?? ''),
+            buildInfoTile(
+                'Uterus Contracted', deliveryData['uterusContracted'] ?? ''),
+            buildInfoTile('Vitamin A Given', deliveryData['vitaminA'] ?? ''),
+            buildInfoTile('Family Planning Provided',
+                deliveryData['familyPlanning'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Newborn Information',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            const Divider(),
+            buildInfoTile('Newborn Passed Stool',
+                deliveryData['newbornPassedStool'] ?? ''),
+            buildInfoTile('Newborn Passed Urine',
+                deliveryData['newbornPassedUrine'] ?? ''),
+            buildInfoTile(
+                'Newborn Temperature', deliveryData['newbornTemp'] ?? ''),
+          ],
         ),
       ),
     );
   }
 }
+
+class PreviousDeliveriesDetailedScreen extends StatelessWidget {
+  final Map<String, dynamic> deliveryData;
+
+  const PreviousDeliveriesDetailedScreen({Key? key, required this.deliveryData})
+      : super(key: key);
+
+  Widget buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Previous Delivery Details'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Delivery Information',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            const Divider(),
+            buildInfoTile('Baby Alive', deliveryData['Baby Alive'] ?? ''),
+            buildInfoTile(
+                'Date of Delivery', deliveryData['Date of Delivery'] ?? ''),
+            buildInfoTile('Location', deliveryData['Location'] ?? ''),
+            buildInfoTile('Type', deliveryData['Type'] ?? ''),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MedicalFormsDetailedScreen extends StatelessWidget {
+  final Map<String, dynamic> medicalFormData;
+
+  const MedicalFormsDetailedScreen({Key? key, required this.medicalFormData})
+      : super(key: key);
+
+  Widget buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Medical Form Details'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Medical Form Information',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            const Divider(),
+            buildInfoTile('File Number', medicalFormData['fileno'] ?? ''),
+            buildInfoTile('Date', medicalFormData['Date'] ?? ''),
+            buildInfoTile('BP/Temp', medicalFormData['BP/Temp'] ?? ''),
+            buildInfoTile('Diagnosis', medicalFormData['Diagnosis'] ?? ''),
+            buildInfoTile('Lab/Remarks', medicalFormData['Lab/Remarks'] ?? ''),
+            buildInfoTile('Treatment', medicalFormData['Treatment'] ?? ''),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// class ANCDetailedScreen extends StatelessWidget {
+//   final Map<String, dynamic> ancData;
+
+//   const ANCDetailedScreen({Key? key, required this.ancData}) : super(key: key);
+
+//   Widget buildInfoTile(String label, String value) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             flex: 2,
+//             child: Text(
+//               label,
+//               style:
+//                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 3,
+//             child: Text(
+//               value.isNotEmpty ? value : 'N/A',
+//               style: const TextStyle(fontSize: 16.0),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget buildTrueValuesSection(String title, Map<String, dynamic> data) {
+//     final trueValues = data.entries
+//         .where((entry) => entry.value == true)
+//         .map((entry) => entry.key)
+//         .toList();
+
+//     if (trueValues.isEmpty) {
+//       return const SizedBox.shrink();
+//     }
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           title,
+//           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//         ),
+//         const Divider(),
+//         ...trueValues.map((value) => Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 4.0),
+//               child: Text(
+//                 value,
+//                 style: const TextStyle(fontSize: 16.0),
+//               ),
+//             )),
+//         const SizedBox(height: 16),
+//       ],
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('ANC Details'),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'General Information',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile('ANC Reg No', ancData['ANC Reg No'] ?? ''),
+//             buildInfoTile('Date', ancData['Date'] ?? ''),
+//             buildInfoTile('Time', ancData['Time'] ?? ''),
+//             buildInfoTile('Comments', ancData['Comments'] ?? ''),
+//             const SizedBox(height: 16),
+//             buildTrueValuesSection('Current Pregnancy',
+//                 Map<String, dynamic>.from(ancData['Current Pregnancy'] ?? {})),
+//             buildTrueValuesSection('General Medical',
+//                 Map<String, dynamic>.from(ancData['General Medical'] ?? {})),
+//             buildTrueValuesSection('Obstetric History',
+//                 Map<String, dynamic>.from(ancData['Obstetric History'] ?? {})),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//   Stream<QuerySnapshot> _searchDeliveries() {
+//     if (searchKey.isEmpty) {
+//       return FirebaseFirestore.instance.collection('Prev_Delivery').snapshots();
+//     }
+
+//     return FirebaseFirestore.instance
+//         .collection('Prev_Delivery')
+//         .where('year', isEqualTo: searchKey)
+//         .snapshots();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Patient and Delivery Viewer'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(10.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: searchController,
+//               decoration: const InputDecoration(
+//                 labelText: 'Search by Name or ID',
+//                 border: OutlineInputBorder(),
+//               ),
+//               onChanged: (value) {
+//                 setState(() {
+//                   searchKey = value.trim();
+//                 });
+//               },
+//             ),
+//             const SizedBox(height: 20),
+//             Expanded(
+//               child: DefaultTabController(
+//                 length: 2,
+//                 child: Column(
+//                   children: [
+//                     const TabBar(
+//                       tabs: [
+//                         Tab(text: 'Patients'),
+//                         Tab(text: 'Deliveries'),
+
+//                       ],
+//                     ),
+//                     Expanded(
+//                       child: TabBarView(
+//                         children: [
+//                           _buildPatientList(),
+//                           _buildDeliveryList(),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildPatientList() {
+//     return StreamBuilder<List<DocumentSnapshot>>(
+//       stream: _searchPatients(), // Replace with your stream function
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Center(child: CircularProgressIndicator());
+//         }
+
+//         if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//           return const Center(
+//             child: Text('No Patients Found'),
+//           );
+//         }
+
+//         return ListView(
+//           children: snapshot.data!.map((doc) {
+//             final data = doc.data()
+//                 as Map<String, dynamic>?; // Safely cast document data
+//             if (data == null) return const SizedBox.shrink();
+
+//             // Safely access fields with null checks
+//             final name = data['name'] ?? data['Name'] ?? 'Unknown';
+//             final fileNo = data['file_no'] ?? 'N/A';
+//             final patientId = data['Patient_1'] ?? 'N/A';
+
+//             return GestureDetector(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => PatientDetailScreen(
+//                       patientData: data,
+//                     ),
+//                   ),
+//                 );
+//               },
+//               child: Card(
+//                 margin: const EdgeInsets.all(10.0),
+//                 child: ListTile(
+//                   title: Text(name),
+//                   subtitle: Text("File Number: $fileNo"),
+//                   trailing: Text("ID: $patientId"),
+//                 ),
+//               ),
+//             );
+//           }).toList(),
+//         );
+//       },
+//     );
+//   }
+
+//   Widget _buildDeliveryList() {
+//     return StreamBuilder<QuerySnapshot>(
+//       stream: _searchDeliveries(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Center(child: CircularProgressIndicator());
+//         }
+
+//         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+//           return const Center(
+//             child: Text('No Deliveries Found'),
+//           );
+//         }
+
+//         return ListView(
+//           children: snapshot.data!.docs.map((doc) {
+//             final data = doc.data()
+//                 as Map<String, dynamic>?; // Safely cast document data
+//             if (data == null) return const SizedBox.shrink();
+
+//             return GestureDetector(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => DeliveryDetailScreen(
+//                       deliveryData: data,
+//                     ),
+//                   ),
+//                 );
+//               },
+//               child: Card(
+//                 margin: const EdgeInsets.all(10.0),
+//                 child: ListTile(
+//                   title: Text("Year: ${data['year'] ?? 'Unknown'}"),
+//                   subtitle: Text("Type: ${data['type'] ?? 'Unknown'}"),
+//                   trailing: Text("Location: ${data['location'] ?? 'Unknown'}"),
+//                 ),
+//               ),
+//             );
+//           }).toList(),
+//         );
+//       },
+//     );
+//   }
+// }
+
+// class PatientDetailScreen extends StatelessWidget {
+//   final Map<String, dynamic> patientData;
+
+//   const PatientDetailScreen({super.key, required this.patientData});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Patient Details'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: ListView(
+//           children: patientData.entries.map((entry) {
+//             return ListTile(
+//               title: Text(entry.key),
+//               subtitle: Text(entry.value?.toString() ?? 'N/A'),
+//             );
+//           }).toList(),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class DeliveryDetailScreen extends StatelessWidget {
+//   final Map<String, dynamic> deliveryData;
+
+//   const DeliveryDetailScreen({super.key, required this.deliveryData});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Delivery Details'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: ListView(
+//           children: deliveryData.entries.map((entry) {
+//             return ListTile(
+//               title: Text(entry.key),
+//               subtitle: Text(entry.value?.toString() ?? 'N/A'),
+//             );
+//           }).toList(),
+//         ),
+//       ),
+//     );
+//   }
+// }

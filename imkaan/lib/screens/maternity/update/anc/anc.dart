@@ -15,6 +15,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
   // TextEditingControllers for various fields
   String currentcardid = '';
   bool isUpdating = false;
+  TextEditingController ancregController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
@@ -50,6 +51,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
 
   Future<String> saveancRecord(
     String patientId,
+    String ancregno,
     String date,
     String time,
     Map<String, bool> currentPregnancy,
@@ -63,12 +65,13 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
           .doc(widget.patientId)
           .collection('AntenatalRecords')
           .add({
-        'Date': dateController.text,
-        'Time': timeController.text,
+        'ANC Reg No': ancregno,
+        'Date': date,
+        'Time': time,
         'Current Pregnancy': currentPregnancy,
         'Obstetric History': obstetricHistory,
         'General Medical': generalMedical,
-        'Comments': commentsController.text,
+        'Comments': comments,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,6 +89,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
   Future<void> updateancRecord(
     String patientId,
     String recordId,
+    String ancregno,
     String date,
     String time,
     Map<String, bool> currentPregnancy,
@@ -100,6 +104,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
           .collection('AntenatalRecords')
           .doc(recordId) // Use the recordId to update a specific document
           .set({
+        'ANC Reg No': ancregno,
         'Date': date,
         'Time': time,
         'Current Pregnancy': currentPregnancy,
@@ -171,6 +176,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
       dateController.clear();
       timeController.clear();
       commentsController.clear();
+      ancregController.clear();
       currentPregnancy = {
         'Single fetus': false,
         'Suspected multiple pregnancy': false,
@@ -221,6 +227,14 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
             Text(
               isUpdating ? 'Add ANC Card' : 'Update ANC Card',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: ancregController,
+              decoration: const InputDecoration(
+                labelText: 'ANC Reg No',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 10.0),
             TextField(
@@ -309,6 +323,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                   updateancRecord(
                       widget.patientId,
                       currentcardid,
+                      ancregController.text,
                       dateController.text,
                       timeController.text,
                       currentPregnancy,
@@ -318,6 +333,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                 } else {
                   currentcardid = await saveancRecord(
                       widget.patientId,
+                      ancregController.text,
                       dateController.text,
                       timeController.text,
                       currentPregnancy,
@@ -375,8 +391,9 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                     final data = document.data() as Map<String, dynamic>;
                     return Card(
                       child: ListTile(
-                        title: Text('Date: ${document['Date']}'),
-                        subtitle: Text('Time: ${document['Time']}'),
+                        title: Text(
+                            'ANC Reg No:  ${data.containsKey('ANC Reg No') ? document['ANC Reg No'] : ''}'),
+                        subtitle: Text('Date: ${document['Date']}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -384,6 +401,10 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                               icon: const Icon(Icons.edit),
                               onPressed: () {
                                 toggleMode(true);
+                                ancregController.text =
+                                    data.containsKey('ANC Reg No')
+                                        ? document['ANC Reg No']
+                                        : '';
                                 dateController.text = data.containsKey('Date')
                                     ? data['Date']
                                     : '';

@@ -16,8 +16,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   final DatabaseService _databaseService = DatabaseService();
 // basic info
   TextEditingController filenoController = TextEditingController();
-  TextEditingController datemainController = TextEditingController();
-  TextEditingController timemainController = TextEditingController();
+  TextEditingController admissiondateController = TextEditingController();
+  TextEditingController admissiontimeController = TextEditingController();
 // discharge info
   TextEditingController dischargeDateController = TextEditingController();
   TextEditingController lengthOfStayController = TextEditingController();
@@ -144,8 +144,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     // Saving discharge info to Firestore (under deliveryfiles subcollection)
     String patientid,
     String fileno,
-    String datemain,
-    String timemain,
+    String admissiondate,
+    String admissiontime,
     // examination on admission
     String weekofpreg,
     String fundalheight,
@@ -210,8 +210,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           .collection('deliveryfiles')
           .add({
         'fileno': fileno,
-        'datemain': datemain,
-        'timemain': timemain,
+        'admissiondate': admissiondate,
+        'admissiontime': admissiontime,
 
         'weekofpreg': weekofpreg,
         'fundalheight': fundalheight,
@@ -282,8 +282,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     String patientid,
     String docid,
     String fileno,
-    String datemain,
-    String timemain,
+    String admissiondate,
+    String admissiontime,
     String weekofpreg,
     String fundalheight,
     String fhr,
@@ -348,8 +348,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           .doc(docid)
           .set({
         'fileno': fileno,
-        'datemain': datemain,
-        'timemain': timemain,
+        'admissiondate': admissiondate,
+        'admissiontime': admissiontime,
 
         'weekofpreg': weekofpreg,
         'fundalheight': fundalheight,
@@ -454,18 +454,18 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                  controller: datemainController,
+                  controller: admissiondateController,
                   readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Date of Admission',
                     border: OutlineInputBorder(),
                   ),
                   onTap: () =>
-                      _selectDate(context, controller: datemainController),
+                      _selectDate(context, controller: admissiondateController),
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                  controller: timemainController,
+                  controller: admissiontimeController,
                   decoration:
                       const InputDecoration(labelText: 'Time of admission'),
                 ),
@@ -840,8 +840,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     await addDischargeInfo(
                       widget.patientId,
                       filenoController.text,
-                      datemainController.text,
-                      timemainController.text,
+                      admissiondateController.text,
+                      admissiontimeController.text,
                       weekofpregController.text,
                       fundalheightController.text,
                       fhrController.text,
@@ -931,12 +931,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                     ? data['fileno']
                                     : ''),
                             'admissiondate': TextEditingController(
-                                text: data.containsKey('datemain')
-                                    ? data['datemain']
+                                text: data.containsKey('admissiondate')
+                                    ? data['admissiondate']
                                     : ''),
                             'admissiontime': TextEditingController(
-                                text: data.containsKey('timemain')
-                                    ? data['timemain']
+                                text: data.containsKey('admissiontime')
+                                    ? data['admissiontime']
                                     : ''),
                             // Examination on admission
                             'weekofpreg': TextEditingController(

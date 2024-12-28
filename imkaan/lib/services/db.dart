@@ -350,7 +350,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Please enter a Patient ID')),
+                                content: Text(
+                                    'Please enter all details to add a new patient')),
                           );
                         }
                       },

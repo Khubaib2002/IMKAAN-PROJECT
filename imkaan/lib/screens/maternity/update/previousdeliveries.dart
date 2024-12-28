@@ -49,7 +49,7 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
           .doc(patientid)
           .collection('prevdeliveries')
           .add({
-        'Age': age,
+        'Date of Delivery': age,
         'Type': type,
         'Location': location,
         'Baby Alive': prevbabyalive,
@@ -89,7 +89,7 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
           .collection('prevdeliveries')
           .doc(prevdeliveryid)
           .set({
-        'Age': age,
+        'Date of Delivery': age,
         'Type': type,
         'Location': location,
         'Baby Alive': prevbabyalive,
@@ -257,7 +257,7 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                         final data = document.data() as Map<String, dynamic>;
                         return Card(
                           child: ListTile(
-                            title: Text(document['Age']),
+                            title: Text(document['Date of Delivery']),
                             subtitle: Text(document['Type']),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -266,7 +266,8 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     toggleMode(true);
-                                    dateController.text = document['Age'];
+                                    dateController.text =
+                                        document['Date of Delivery'];
                                     typeController.text = document['Type'];
                                     LocationController.text =
                                         document['Location'];
