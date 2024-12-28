@@ -542,6 +542,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     MaterialPageRoute(
                       builder: (context) => Previousdeliveries(
                         patientId: currentPatientId,
+                        name: nameController.text,
                       ),
                     ),
                   );
@@ -554,8 +555,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            MedicalForm(patientId: currentPatientId)),
+                        builder: (context) => MedicalForm(
+                            patientId: currentPatientId,
+                            name: nameController.text)),
                   );
                 },
                 child: const Text('Medical Forms'),

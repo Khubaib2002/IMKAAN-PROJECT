@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class Previousdeliveries extends StatefulWidget {
-  final String patientId;
-  const Previousdeliveries({required this.patientId});
+  final String patientId, name;
+  const Previousdeliveries({required this.patientId, required this.name});
 
   @override
   State<Previousdeliveries> createState() => _PreviousdeliveriesState();
@@ -12,6 +12,8 @@ class Previousdeliveries extends StatefulWidget {
 
 class _PreviousdeliveriesState extends State<Previousdeliveries> {
   // Previous deliveries
+  bool isUpdating = false;
+  String docid = '';
   TextEditingController dateController = TextEditingController();
   TextEditingController typeController = TextEditingController();
   TextEditingController LocationController = TextEditingController();
@@ -59,6 +61,23 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
+  }
+
+  void toggleMode(bool updating) {
+    setState(() {
+      isUpdating = updating;
+      // clearFields();
+    });
+  }
+
+  void clearFields() {
+    setState(() {
+      docid = '';
+      dateController.clear();
+      typeController.clear();
+      LocationController.clear();
+      prevbabyalive = false;
+    });
   }
 
   Future<void> updatepreviousdelivery(String patientid, String prevdeliveryid,
@@ -129,10 +148,15 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text(
-                  'Enter new delivery file information here',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  'Patient Name: ${widget.name}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.normal),
                 ),
+                const SizedBox(height: 20),
+                Text(isUpdating ? 'Update Delivery File' : 'Add Delivery File',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 TextField(
                   controller: dateController,
@@ -162,13 +186,34 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    addprevdelivery(
-                      widget.patientId,
-                      dateController.text,
-                      typeController.text,
-                      LocationController.text,
-                      prevbabyalive.toString(),
-                    );
+                    if (widget.patientId.isEmpty ||
+                        dateController.text.isEmpty ||
+                        typeController.text.isEmpty ||
+                        LocationController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text(
+                              'Please fill in all required fields before saving.')));
+                      return;
+                    }
+                    if (isUpdating) {
+                      updatepreviousdelivery(
+                          widget.patientId,
+                          docid,
+                          dateController.text,
+                          typeController.text,
+                          LocationController.text,
+                          prevbabyalive.toString());
+                    } else {
+                      addprevdelivery(
+                        widget.patientId,
+                        dateController.text,
+                        typeController.text,
+                        LocationController.text,
+                        prevbabyalive.toString(),
+                      );
+                    }
+                    clearFields();
+                    toggleMode(false);
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
@@ -177,15 +222,16 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Padding(
+                  child: Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-                    child: Text('Save', style: TextStyle(fontSize: 18)),
+                    child: Text(isUpdating ? 'Update' : 'Add',
+                        style: TextStyle(fontSize: 18)),
                   ),
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Saved previous deliveries',
+                  'Previous deliveries',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
@@ -204,8 +250,11 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                       return const Center(
                           child: Text('No Previous Delivery Files Found'));
                     }
+
                     return Column(
                       children: snapshot.data!.docs.map<Widget>((document) {
+                        docid = document.id;
+                        final data = document.data() as Map<String, dynamic>;
                         return Card(
                           child: ListTile(
                             title: Text(document['Age']),
@@ -216,28 +265,27 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
+                                    toggleMode(true);
                                     dateController.text = document['Age'];
                                     typeController.text = document['Type'];
                                     LocationController.text =
                                         document['Location'];
-                                    prevbabyalive = document['Baby Alive'];
-                                    updatepreviousdelivery(
-                                      widget.patientId,
-                                      document.id,
-                                      dateController.text,
-                                      typeController.text,
-                                      LocationController.text,
-                                      prevbabyalive.toString(),
-                                    );
+                                    prevbabyalive =
+                                        document['Baby Alive'] == 'true'
+                                            ? true
+                                            : false;
                                   },
                                 ),
+                                const Text('Edit'),
                                 IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {
                                     deletePreviousDelivery(
                                         widget.patientId, document.id);
+                                    clearFields();
                                   },
                                 ),
+                                const Text('Delete'),
                               ],
                             ),
                           ),

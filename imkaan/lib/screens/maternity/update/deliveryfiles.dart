@@ -1398,13 +1398,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                     TextField(
                                       controller: controllers['dischargedate'],
                                       decoration: const InputDecoration(
-                                          labelText: 'Date of Delivery'),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextField(
-                                      controller: controllers['fileno'],
-                                      decoration: const InputDecoration(
-                                          labelText: 'File no'),
+                                          labelText: 'Date of Discharge'),
                                     ),
                                     const SizedBox(height: 10),
                                     TextField(

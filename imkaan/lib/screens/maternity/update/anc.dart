@@ -132,6 +132,12 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 10),
+            Text(
+              'Patient Name: ${widget.name}',
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+            ),
             TextField(
               controller: dateController,
               decoration: const InputDecoration(
@@ -146,11 +152,6 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                 labelText: 'Time',
                 border: OutlineInputBorder(),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              widget.name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(

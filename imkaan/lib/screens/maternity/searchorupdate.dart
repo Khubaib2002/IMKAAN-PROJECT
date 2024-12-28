@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imkaan/screens/searchpatient.dart';
+import 'package:imkaan/screens/maternity/search/searchpatient.dart';
 import 'package:imkaan/services/db.dart';
 
 class Searchorupdate extends StatelessWidget {

@@ -3,15 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class MedicalForm extends StatefulWidget {
-  final String patientId;
-  const MedicalForm({required this.patientId});
+  final String patientId, name;
+  const MedicalForm({required this.patientId, required this.name});
 
   @override
   State<MedicalForm> createState() => _MedicalFormState();
 }
 
 class _MedicalFormState extends State<MedicalForm> {
-  // Controllers for input fields
+  bool isUpdating = false;
+  String docid = '';
   TextEditingController dateController = TextEditingController();
   TextEditingController bpTempController = TextEditingController();
   TextEditingController diagnosisController = TextEditingController();
@@ -113,6 +114,24 @@ class _MedicalFormState extends State<MedicalForm> {
     }
   }
 
+  void toggleMode(bool updating) {
+    setState(() {
+      isUpdating = updating;
+      // clearFields();
+    });
+  }
+
+  void clearFields() {
+    setState(() {
+      dateController.clear();
+      bpTempController.clear();
+      diagnosisController.clear();
+      treatmentController.clear();
+      labRemarksController.clear();
+      filenoController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.patientId.isEmpty) {
@@ -138,9 +157,15 @@ class _MedicalFormState extends State<MedicalForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 10),
+              Text(
+                'Patient Name: ${widget.name}',
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.normal),
+              ),
               const SizedBox(height: 20),
-              const Text(
-                'Enter new medical record information here',
+              Text(
+                isUpdating ? 'Add Medical Record' : 'Update Medical Form',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
@@ -196,15 +221,39 @@ class _MedicalFormState extends State<MedicalForm> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  addMedicalForm(
-                    widget.patientId,
-                    filenoController.text,
-                    dateController.text,
-                    bpTempController.text,
-                    diagnosisController.text,
-                    treatmentController.text,
-                    labRemarksController.text,
-                  );
+                  if (widget.patientId.isEmpty ||
+                      dateController.text.isEmpty ||
+                      diagnosisController.text.isEmpty ||
+                      filenoController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                            'Please fill in all required fields before saving.')));
+                    return;
+                  }
+                  if (isUpdating) {
+                    updateMedicalForm(
+                      widget.patientId,
+                      docid,
+                      filenoController.text,
+                      dateController.text,
+                      bpTempController.text,
+                      diagnosisController.text,
+                      treatmentController.text,
+                      labRemarksController.text,
+                    );
+                  } else {
+                    addMedicalForm(
+                      widget.patientId,
+                      filenoController.text,
+                      dateController.text,
+                      bpTempController.text,
+                      diagnosisController.text,
+                      treatmentController.text,
+                      labRemarksController.text,
+                    );
+                  }
+                  clearFields();
+                  toggleMode(false);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
@@ -213,10 +262,11 @@ class _MedicalFormState extends State<MedicalForm> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Padding(
+                child: Padding(
                   padding:
                       EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-                  child: Text('Save', style: TextStyle(fontSize: 18)),
+                  child: Text(isUpdating ? 'Update' : 'Add',
+                      style: TextStyle(fontSize: 18)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -242,6 +292,7 @@ class _MedicalFormState extends State<MedicalForm> {
                   }
                   return Column(
                     children: snapshot.data!.docs.map<Widget>((document) {
+                      docid = document.id;
                       final data = document.data() as Map<String, dynamic>;
                       return Card(
                         child: ListTile(
@@ -253,6 +304,7 @@ class _MedicalFormState extends State<MedicalForm> {
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
+                                  toggleMode(true);
                                   filenoController.text =
                                       data.containsKey('fileno')
                                           ? data['fileno']
@@ -278,28 +330,16 @@ class _MedicalFormState extends State<MedicalForm> {
                                           : '';
                                 },
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.save),
-                                onPressed: () {
-                                  updateMedicalForm(
-                                    widget.patientId,
-                                    document.id,
-                                    filenoController.text,
-                                    dateController.text,
-                                    bpTempController.text,
-                                    diagnosisController.text,
-                                    treatmentController.text,
-                                    labRemarksController.text,
-                                  );
-                                },
-                              ),
+                              const Text('Edit'),
                               IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () {
                                   deleteMedicalForm(
                                       widget.patientId, document.id);
+                                  clearFields();
                                 },
                               ),
+                              const Text('Delete'),
                             ],
                           ),
                         ),
