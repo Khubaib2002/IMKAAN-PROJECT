@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/mental.dart';
-import 'package:imkaan/screens/searchorupdate.dart';
+import 'package:imkaan/screens/maternity/searchorupdate.dart';
 // import 'package:imkaan/screens/home/maternity.dart';
 import 'package:imkaan/services/auth.dart';
 // import 'package:imkaan/services/db.dart';

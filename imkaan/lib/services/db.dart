@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:imkaan/screens/maternity/previousdeliveries.dart';
+import 'package:imkaan/screens/maternity/update/anc.dart';
+import 'package:imkaan/screens/maternity/update/previousdeliveries.dart';
 import 'package:imkaan/screens/maternity/update/deliveryfiles.dart';
-import 'package:imkaan/screens/maternity/update/discharge/discharge.dart';
+import 'package:imkaan/screens/maternity/update/discharge.dart';
 import 'package:imkaan/screens/maternity/update/medforms.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
@@ -567,7 +568,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CardInfoPage()),
+                          builder: (context) => AntenatalDeliveryCard(
+                              patientId: currentPatientId,
+                              name: nameController.text)),
                     );
                   },
                   child: const Text('ANC Card Info'),

@@ -242,24 +242,45 @@ class _MedicalFormState extends State<MedicalForm> {
                   }
                   return Column(
                     children: snapshot.data!.docs.map<Widget>((document) {
+                      final data = document.data() as Map<String, dynamic>;
                       return Card(
                         child: ListTile(
-                          title: Text('Date: ${document['Date']}'),
-                          subtitle: Text('Diagnosis: ${document['Diagnosis']}'),
+                          title: Text('Date: ${data['Date']}'),
+                          subtitle: Text('Diagnosis: ${data['Diagnosis']}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
-                                  dateController.text = document['Date'];
-                                  bpTempController.text = document['BP/Temp'];
+                                  filenoController.text =
+                                      data.containsKey('fileno')
+                                          ? data['fileno']
+                                          : '';
+                                  dateController.text = data.containsKey('Date')
+                                      ? data['Date']
+                                      : '';
+                                  bpTempController.text =
+                                      data.containsKey('BP/Temp')
+                                          ? data['BP/Temp']
+                                          : '';
                                   diagnosisController.text =
-                                      document['Diagnosis'];
+                                      data.containsKey('Diagnosis')
+                                          ? data['Diagnosis']
+                                          : '';
                                   treatmentController.text =
-                                      document['Treatment'];
+                                      data.containsKey('Treatment')
+                                          ? data['Treatment']
+                                          : '';
                                   labRemarksController.text =
-                                      document['Lab/Remarks'];
+                                      data.containsKey('Lab/Remarks')
+                                          ? data['Lab/Remarks']
+                                          : '';
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.save),
+                                onPressed: () {
                                   updateMedicalForm(
                                     widget.patientId,
                                     document.id,
