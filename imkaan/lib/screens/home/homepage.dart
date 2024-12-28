@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/mental.dart';
@@ -15,17 +17,19 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Expanded(
-              flex: 1,
-              child: Image.asset(
-                'assets/logo.png',
-                height: 40,
-                color: Colors.black,
-                fit: BoxFit.contain,
-              ),
-            ),
+            // Flexible(
+            //   flex: 3,
+            //   child: Image.asset(
+            //     'logo.png',
+            //     height: 60,
+            //     fit: BoxFit.contain,
+            //     errorBuilder: (context, error, stackTrace) {
+            //       return const Icon(Icons.broken_image, color: Colors.black);
+            //     },
+            //   ),
+            // ),
             const SizedBox(width: 10),
-            Expanded(
+            Flexible(
               flex: 3,
               child: Text(
                 'Dashboard',
@@ -33,6 +37,7 @@ class HomePage extends StatelessWidget {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
+                  // decoration:
                 ),
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
@@ -59,15 +64,10 @@ class HomePage extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFFFCA03),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+            image: DecorationImage(
+                image: AssetImage('logo.png'),
+                scale: 1,
+                filterQuality: FilterQuality.high)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -79,48 +79,47 @@ class HomePage extends StatelessWidget {
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 5.0,
-                      color: const Color(0xFFFFCA03),
-                      offset: const Offset(2, 3),
-                    ),
-                  ],
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 80),
-            _buildDashboardButton(
-              context,
-              label: 'Maternity Clinic',
-              icon: Icons.local_hospital,
-              color: Colors.pinkAccent,
-              highlightColor: const Color(0xFFFFCA03),
-              onPressed: () {
-                Navigator.push(
+            const SizedBox(height: 230),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              children: [
+                _buildDashboardCard(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const Searchorupdate(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildDashboardButton(
-              context,
-              label: 'Mental Health Clinic',
-              icon: Icons.psychology,
-              color: Colors.teal,
-              highlightColor: const Color(0xFFFFCA03),
-              onPressed: () {
-                Navigator.push(
+                  label: 'Maternity Clinic',
+                  icon: Icons.local_hospital,
+                  color: Colors.pinkAccent,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Searchorupdate(),
+                      ),
+                    );
+                  },
+                ),
+                _buildDashboardCard(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const MentalHealth(),
-                  ),
-                );
-              },
+                  label: 'Mental Health Clinic',
+                  icon: Icons.psychology,
+                  color: Colors.teal,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MentalHealth(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -128,34 +127,40 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDashboardButton(
+  Widget _buildDashboardCard(
     BuildContext context, {
     required String label,
     required IconData icon,
     required Color color,
-    required Color highlightColor,
     required VoidCallback onPressed,
   }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 28, color: Colors.white),
-      label: Text(
-        label,
-        style: GoogleFonts.poppins(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-        backgroundColor: color,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-          side: BorderSide(color: highlightColor, width: 2),
-        ),
-        shadowColor: Colors.black26,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Card(
         elevation: 6.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: color,
+              child: Icon(icon, size: 30, color: Colors.white),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
