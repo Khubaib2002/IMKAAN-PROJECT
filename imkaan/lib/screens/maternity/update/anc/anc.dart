@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:imkaan/screens/maternity/update/anc/visits.dart';
+import 'package:intl/intl.dart';
 
 class AntenatalDeliveryCard extends StatefulWidget {
   final String patientId, name;
@@ -11,6 +13,8 @@ class AntenatalDeliveryCard extends StatefulWidget {
 
 class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
   // TextEditingControllers for various fields
+  String currentcardid = '';
+  bool isUpdating = false;
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
@@ -44,9 +48,17 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
     'Chronic hypertension': false,
   };
 
-  Future<void> saveancRecord() async {
+  Future<String> saveancRecord(
+    String patientId,
+    String date,
+    String time,
+    Map<String, bool> currentPregnancy,
+    Map<String, bool> obstetricHistory,
+    Map<String, bool> generalMedical,
+    String comments,
+  ) async {
     try {
-      await FirebaseFirestore.instance
+      DocumentReference docref = await FirebaseFirestore.instance
           .collection('Patients')
           .doc(widget.patientId)
           .collection('AntenatalRecords')
@@ -60,12 +72,14 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Record saved successfully!')),
+        const SnackBar(content: Text('Card added successfully!')),
       );
+      return docref.id;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
+      return '';
     }
   }
 
@@ -74,9 +88,9 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
     String recordId,
     String date,
     String time,
-    String currentPregnancy,
-    String obstetricHistory,
-    String generalMedical,
+    Map<String, bool> currentPregnancy,
+    Map<String, bool> obstetricHistory,
+    Map<String, bool> generalMedical,
     String comments,
   ) async {
     try {
@@ -95,7 +109,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Antenatal record updated successfully!')),
+        const SnackBar(content: Text('Card updated successfully!')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -114,11 +128,76 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
           .delete();
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Record deleted successfully!')));
+          const SnackBar(content: Text('Card deleted successfully!')));
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
+  }
+
+  Future<void> _selectDate(
+    BuildContext context, {
+    required TextEditingController controller,
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
+    // Use default values if none are provided
+    initialDate ??= DateTime.now();
+    firstDate ??= DateTime(1900);
+    lastDate ??= DateTime.now();
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (selectedDate != null) {
+      controller.text = DateFormat('yyyy-MM-dd').format(selectedDate);
+    }
+  }
+
+  void toggleMode(bool updating) {
+    setState(() {
+      isUpdating = updating;
+      // clearFields();
+    });
+  }
+
+  void clearFields() {
+    setState(() {
+      dateController.clear();
+      timeController.clear();
+      commentsController.clear();
+      currentPregnancy = {
+        'Single fetus': false,
+        'Suspected multiple pregnancy': false,
+        'Age less than 16 years': false,
+        'RH(-) in current or previous pregnancy': false,
+        'Anemia': false,
+      };
+      obstetricHistory = {
+        'Previous stillbirth or neonatal loss and IUD': false,
+        'History of abortion': false,
+        'SVD at home or hospital': false,
+        'Low birth weight baby': false,
+        'Prolonged labor': false,
+        'PPH and APH': false,
+        'Blood transfusion': false,
+        'C/S (cesarean section)': false,
+        'Fetal distress': false,
+      };
+      generalMedical = {
+        'Diabetes mellitus': false,
+        'HCV': false,
+        'HBsAg': false,
+        'Cardiac disease': false,
+        'TB': false,
+        'Chronic hypertension': false,
+      };
+    });
   }
 
   @override
@@ -132,18 +211,26 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Text(
               'Patient Name: ${widget.name}',
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
             ),
+            const SizedBox(height: 20),
+            Text(
+              isUpdating ? 'Add ANC Card' : 'Update ANC Card',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10.0),
             TextField(
               controller: dateController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Date',
                 border: OutlineInputBorder(),
               ),
+              onTap: () => _selectDate(context, controller: dateController),
             ),
             const SizedBox(height: 10),
             TextField(
@@ -210,8 +297,37 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
               ),
               maxLines: 3,
             ),
+            const SizedBox(height: 10.0),
             ElevatedButton(
-              onPressed: saveancRecord,
+              onPressed: () async {
+                if (dateController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Please enter date to continue.')));
+                  return;
+                }
+                if (isUpdating) {
+                  updateancRecord(
+                      widget.patientId,
+                      currentcardid,
+                      dateController.text,
+                      timeController.text,
+                      currentPregnancy,
+                      obstetricHistory,
+                      generalMedical,
+                      commentsController.text);
+                } else {
+                  currentcardid = await saveancRecord(
+                      widget.patientId,
+                      dateController.text,
+                      timeController.text,
+                      currentPregnancy,
+                      obstetricHistory,
+                      generalMedical,
+                      commentsController.text);
+                }
+                clearFields();
+                toggleMode(false);
+              },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue,
@@ -219,10 +335,25 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-                child: Text('Save', style: TextStyle(fontSize: 18)),
+                child: Text(isUpdating ? 'Update' : 'Add',
+                    style: TextStyle(fontSize: 18)),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ANCVisits(
+                        patientId: widget.patientId,
+                        name: widget.name,
+                        cardid: currentcardid),
+                  ),
+                );
+              },
+              child: Text('Add or update visits for this card'),
             ),
             const SizedBox(height: 10),
             StreamBuilder<QuerySnapshot>(
@@ -252,6 +383,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
+                                toggleMode(true);
                                 dateController.text = data.containsKey('Date')
                                     ? data['Date']
                                     : '';
@@ -277,28 +409,18 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                                     data.containsKey('Comments')
                                         ? data['Comments']
                                         : '';
+                                currentcardid = document.id.toString();
                               },
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.save),
-                              onPressed: () {
-                                updateancRecord(
-                                    widget.patientId,
-                                    document.id,
-                                    dateController.text,
-                                    timeController.text,
-                                    currentPregnancy.toString(),
-                                    obstetricHistory.toString(),
-                                    generalMedical.toString(),
-                                    commentsController.text);
-                              },
-                            ),
+                            const Text('Edit'),
                             IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
                                 deleteancRecord(widget.patientId, document.id);
+                                clearFields();
                               },
                             ),
+                            const Text('Delete'),
                           ],
                         ),
                       ),

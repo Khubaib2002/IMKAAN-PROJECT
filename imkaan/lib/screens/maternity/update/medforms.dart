@@ -157,7 +157,7 @@ class _MedicalFormState extends State<MedicalForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               Text(
                 'Patient Name: ${widget.name}',
                 style: const TextStyle(
