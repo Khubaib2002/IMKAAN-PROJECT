@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:imkaan/screens/maternity/previousdeliveries.dart';
 import 'package:imkaan/screens/maternity/update/deliveryfiles.dart';
 import 'package:imkaan/screens/maternity/update/discharge/discharge.dart';
 import 'package:intl/intl.dart';
@@ -77,11 +78,10 @@ class DatabaseService {
     return await patients.doc(pid).get();
   }
 
-  // Get previous deliveries for a specific patient
-  Stream<QuerySnapshot> getPreviousDeliveries(String patientId) {
+  Stream<QuerySnapshot> getPreviousDeliveryFiles(String patientId) {
     return patients
         .doc(patientId)
-        .collection('Prev_Delivery') // Access the 'Prev_Delivery' subcollection
+        .collection('deliveryfiles') // Access the 'Prev_Delivery' subcollection
         .snapshots();
   }
 
@@ -532,6 +532,20 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                 },
                 child: const Text('Delivery Files'),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Previousdeliveries(
+                        patientId: currentPatientId,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Previous Deliveries'),
+              ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
@@ -554,19 +568,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           builder: (context) => const CardInfoPage()),
                     );
                   },
-                  child: const Text('Card Info'),
+                  child: const Text('ANC Card Info'),
                 ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const VaginalExaminationsPage()),
-                  );
-                },
-                child: const Text('Vaginal Examinations'),
               ),
             ],
           ),
