@@ -236,19 +236,84 @@ class _ANCVisitsState extends State<ANCVisits> {
     if (widget.patientId.isEmpty || widget.cardid.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Visits Info'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Antenatal, Labor, and Delivery Cards',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
-        body: const Center(
-          child: Text(
-            'Please select an ANC Card to add or update visits.',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFFF9C4),
+                Color(0xFFFFECB3)
+              ], // Soft yellow gradient
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.health_and_safety, // Relevant medical icon
+                size: 100, // Slightly larger for emphasis
+                color: Color(0xFFFFCA03), // Bright yellow
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Please select an ANC Card to add or update visits.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8D6E63), // A complementary brown tone
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('ANC Visits for ${widget.name}'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'ANC Visits for ${widget.name}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

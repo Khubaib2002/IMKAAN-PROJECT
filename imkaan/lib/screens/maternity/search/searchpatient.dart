@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/maternity/search/ancdetailed.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
@@ -64,25 +65,76 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Patients'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        title: Row(
           children: [
-            TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search by Name or ID',
-                border: OutlineInputBorder(),
+            const Spacer(),
+            Text(
+              'Search Patients',
+              style: GoogleFonts.poppins(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 70, 61, 1),
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchKey = value.trim();
-                });
-              },
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const Spacer(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Image.asset(
+                'logo.png',
+                height: 50,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image, size: 30);
+                },
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 249, 246, 220),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: 'Search by Name or ID',
+                      labelStyle: GoogleFonts.poppins(
+                        fontSize: 16.0,
+                        color: Colors.black54,
+                      ),
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchKey = value.trim();
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Enter a name or patient ID to search',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14.0,
+                      color: Colors.black54,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<List<DocumentSnapshot>>(
                 stream: _searchPatients(),
@@ -92,7 +144,12 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No Patients Found'));
+                    return const Center(
+                      child: Text(
+                        'No Patients Found',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    );
                   }
 
                   return ListView(
@@ -117,13 +174,35 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
                         },
                         child: Card(
                           margin: const EdgeInsets.all(10.0),
+                          // color: Colors.amber,
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                           child: ListTile(
-                            title: Text(name,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text("ID: $patientId"),
+                            title: Text(
+                              name,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "ID: $patientId",
+                              style: GoogleFonts.poppins(
+                                fontSize: 14.0,
+                              ),
+                            ),
                             leading: CircleAvatar(
-                              child: Text(name[0].toUpperCase(),
-                                  style: TextStyle(fontSize: 20.0)),
+                              backgroundColor: Color.fromARGB(255, 70, 61, 1),
+                              foregroundColor:
+                                  Color.fromARGB(255, 249, 246, 220),
+                              child: Text(
+                                name[0].toUpperCase(),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18.0,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -156,9 +235,29 @@ class PatientDetailTabsScreen extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Details - $patientName',
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Details - $patientName',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03),
           bottom: const TabBar(
+            indicatorColor: Colors.black,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
+            unselectedLabelColor: Colors.black54,
             tabs: [
               Tab(text: 'Delivery Files'),
               Tab(text: 'Previous Deliveries'),
@@ -510,7 +609,25 @@ class DetailedDeliveryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Delivery File Details'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Delivery File Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -622,7 +739,25 @@ class PreviousDeliveriesDetailedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Previous Delivery Details'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Previous Delivery Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -682,7 +817,25 @@ class MedicalFormsDetailedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medical Form Details'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Medical Form Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

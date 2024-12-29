@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/mental.dart';
@@ -13,41 +11,38 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            // Flexible(
-            //   flex: 3,
-            //   child: Image.asset(
-            //     'logo.png',
-            //     height: 60,
-            //     fit: BoxFit.contain,
-            //     errorBuilder: (context, error, stackTrace) {
-            //       return const Icon(Icons.broken_image, color: Colors.black);
-            //     },
-            //   ),
-            // ),
-            const SizedBox(width: 10),
-            Flexible(
-              flex: 3,
-              child: Text(
-                'Dashboard',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  // decoration:
-                ),
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
+            Image.asset(
+              'logo.png',
+              height: 50,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.broken_image, size: 30);
+              },
             ),
+            const Spacer(),
+            const SizedBox(
+              width: 45,
+            ),
+            Text(
+              'Dashboard',
+              style: GoogleFonts.poppins(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 70, 61, 1),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Spacer(),
           ],
         ),
-        centerTitle: true,
         backgroundColor: const Color(0xFFFFCA03),
-        elevation: 4.0,
         actions: <Widget>[
           TextButton.icon(
             label: const Text(
@@ -58,110 +53,179 @@ class HomePage extends StatelessWidget {
               await _auth.SignOut();
             },
             icon: const Icon(Icons.logout, color: Colors.white),
-          )
+          ),
         ],
       ),
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('logo.png'),
-                scale: 1,
-                filterQuality: FilterQuality.high)),
+        height: double.infinity,
+        decoration:
+            const BoxDecoration(color: Color.fromARGB(255, 249, 246, 220)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Welcome to Imkaan Database Management System!',
-                style: GoogleFonts.poppins(
-                  fontSize: 23,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05,
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: screenHeight * .05,
+                  ),
+                  Text(
+                    'Welcome to',
+                    style: GoogleFonts.poppins(
+                      fontSize: screenHeight * 0.037,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                      letterSpacing: 1.1,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: screenHeight * 0.026),
+                  Text(
+                    'Imkaan Database Management System',
+                    style: GoogleFonts.poppins(
+                      fontSize: screenHeight * 0.045,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 44, 44, 44),
+                      // shadows: [
+                      //   Shadow(
+                      //     blurRadius: 6.0,
+                      //     color: Colors.grey.shade400,
+                      //     offset: const Offset(1.5, 1.5),
+                      //   ),
+                      // ],
+                      letterSpacing: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 230),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                _buildDashboardCard(
-                  context,
-                  label: 'Maternity Clinic',
-                  icon: Icons.local_hospital,
-                  color: Colors.pinkAccent,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Searchorupdate(),
-                      ),
-                    );
-                  },
-                ),
-                _buildDashboardCard(
-                  context,
-                  label: 'Mental Health Clinic',
-                  icon: Icons.psychology,
-                  color: Colors.teal,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MentalHealth(),
-                      ),
-                    );
-                  },
-                ),
-              ],
+            SizedBox(height: screenHeight * 0.09),
+            Flexible(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  HoverableDashboardCard(
+                    label: 'Maternity Clinic',
+                    imagePath: 'maternity.png',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Searchorupdate(),
+                        ),
+                      );
+                    },
+                  ),
+                  // spacing b/w cards
+                  const SizedBox(width: 30),
+                  HoverableDashboardCard(
+                    label: 'Mental Health Clinic',
+                    imagePath: 'mentalhealth.png',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MentalHealth(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildDashboardCard(
-    BuildContext context, {
-    required String label,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-  }) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Card(
-        elevation: 6.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: color,
-              child: Icon(icon, size: 30, color: Colors.white),
+class HoverableDashboardCard extends StatefulWidget {
+  final String label;
+  final String imagePath;
+  final VoidCallback onPressed;
+
+  const HoverableDashboardCard({
+    Key? key,
+    required this.label,
+    required this.imagePath,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  State<HoverableDashboardCard> createState() => _HoverableDashboardCardState();
+}
+
+class _HoverableDashboardCardState extends State<HoverableDashboardCard> {
+  Color _cardColor = Colors.white;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return MouseRegion(
+      onEnter: (_) => _updateCardColor(Colors.grey[300]!),
+      onExit: (_) => _updateCardColor(Colors.white),
+      child: GestureDetector(
+        onTap: () {
+          _updateCardColor(Colors.grey[400]!);
+          widget.onPressed();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: Card(
+            color: _cardColor,
+            elevation: 8.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
-            const SizedBox(height: 10),
-            Text(
-              label,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+            child: SizedBox(
+              width: screenWidth * 0.4,
+              height: screenHeight * 0.27,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: screenHeight * 0.045,
+                    backgroundColor: Colors.transparent,
+                    child: Image.asset(
+                      widget.imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.broken_image, size: 30);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Text(
+                    widget.label,
+                    style: GoogleFonts.poppins(
+                      fontSize: screenHeight * 0.025,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  void _updateCardColor(Color color) {
+    setState(() {
+      _cardColor = color;
+    });
   }
 }

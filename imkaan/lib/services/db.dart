@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/maternity/update/anc/anc.dart';
 import 'package:imkaan/screens/maternity/update/previousdeliveries.dart';
 import '../screens/maternity/update/deliveryfiles.dart';
@@ -227,7 +228,30 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isUpdating ? 'Update Patient' : 'Add New Patient'),
+        title: Row(
+          children: [
+            const Spacer(), // Pushes the logo to the right
+            Text(
+              isUpdating ? 'Update Patient' : 'Add New Patient',
+              style: GoogleFonts.poppins(
+                fontSize: 25,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(255, 70, 61, 1),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Spacer(), // Balances space on both sides
+            Image.asset(
+              'logo.png',
+              height: 50,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.broken_image, size: 30);
+              },
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

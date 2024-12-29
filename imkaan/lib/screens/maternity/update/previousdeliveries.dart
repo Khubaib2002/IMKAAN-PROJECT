@@ -127,19 +127,84 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
     if (widget.patientId.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Medical Records'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Previous Deliveries',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
-        body: const Center(
-          child: Text(
-            'Please select a patient to add or update previous deliveries.',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFFF9C4),
+                Color(0xFFFFECB3)
+              ], // Soft yellow gradient
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.health_and_safety, // Relevant medical icon
+                size: 100, // Slightly larger for emphasis
+                color: Color(0xFFFFCA03), // Bright yellow
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Please select a patient to add or update ANC Cards.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8D6E63), // A complementary brown tone
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Or Update Previous Deliveries'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Add Or Update Previous Deliveries',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
       ),
       body: SingleChildScrollView(
         child: Padding(

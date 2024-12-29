@@ -83,7 +83,25 @@ class ANCDetailedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ANC Details'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'ANC Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -155,7 +173,25 @@ class ANCVisitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ANC Visits'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'ANC Visits Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

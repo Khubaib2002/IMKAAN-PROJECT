@@ -211,19 +211,84 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
     if (widget.patientId.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Medical Records'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Antenatal, Labor, and Delivery Cards',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
-        body: const Center(
-          child: Text(
-            'Please select a patient to add or update ANC Cards.',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFFF9C4),
+                Color(0xFFFFECB3)
+              ], // Soft yellow gradient
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.health_and_safety, // Relevant medical icon
+                size: 100, // Slightly larger for emphasis
+                color: Color(0xFFFFCA03), // Bright yellow
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Please select a patient to add or update ANC Cards.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8D6E63), // A complementary brown tone
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Antenatal, Labor, and Delivery Card'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Antenatal, Labor, and Delivery Cards',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -357,19 +422,20 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                 clearFields();
                 toggleMode(false);
               },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
+              // style: ElevatedButton.styleFrom(
+              //   foregroundColor: Colors.white,
+              //   backgroundColor: Colors.blue,
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(30),
+              //   ),
+              // ),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-                child: Text(isUpdating ? 'Update' : 'Add',
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                child: Text(isUpdating ? 'Update ANC Card' : 'Add ANC Card',
                     style: TextStyle(fontSize: 18)),
               ),
             ),
+            const Divider(),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(

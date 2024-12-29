@@ -137,7 +137,25 @@ class _MedicalFormState extends State<MedicalForm> {
     if (widget.patientId.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Medical Records'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Medical Forms',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
         body: const Center(
           child: Text(
@@ -149,7 +167,25 @@ class _MedicalFormState extends State<MedicalForm> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medical Records'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Add or update Medical Forms',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
       ),
       body: SingleChildScrollView(
         child: Padding(

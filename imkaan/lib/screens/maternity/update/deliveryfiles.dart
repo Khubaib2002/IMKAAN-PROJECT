@@ -422,20 +422,84 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     if (widget.patientId.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Medical Records'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Antenatal, Labor, and Delivery Cards',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              Image.asset(
+                'logo.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
-        body: const Center(
-          child: Text(
-            'Please select a patient to add or update delivery files.',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFFF9C4),
+                Color(0xFFFFECB3)
+              ], // Soft yellow gradient
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.health_and_safety, // Relevant medical icon
+                size: 100, // Slightly larger for emphasis
+                color: Color(0xFFFFCA03), // Bright yellow
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Please select a patient to add or update delivery files.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8D6E63), // A complementary brown tone
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Or Update Delivery Files Information'),
-        shadowColor: Colors.amber[100],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Add Or Update Delivery Files',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -775,6 +839,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   'Performed Procedure',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 20),
                 _buildDropdown(
                     selectedProcedure, 'Select Procedure', procedures, (value) {
                   setState(() {
@@ -786,6 +851,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   'Diagnosis at Exit',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 20),
                 _buildDropdown(selectedDiagnosis, 'Select Diagnosis', diagnoses,
                     (value) {
                   setState(() {
@@ -1595,6 +1661,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                         const Text('Performed Procedure',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
+                                        const SizedBox(height: 20),
                                         _buildDropdown(
                                             selectedProcedureupdate,
                                             'Select Procedure',
@@ -1608,7 +1675,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                         const Text('Diagnosis at Exit',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
-                                        // Dropdown for Diagnosis
+                                        // Dropdown for
+                                        const SizedBox(height: 20),
                                         _buildDropdown(
                                             selectedDiagnosisupdate,
                                             'Select Diagnosis',
