@@ -6,7 +6,7 @@ class ANCVisits extends StatefulWidget {
   final String patientId, name, cardid;
 
   const ANCVisits(
-      {required this.patientId, required this.name, required this.cardid});
+      {super.key, required this.patientId, required this.name, required this.cardid});
 
   @override
   State<ANCVisits> createState() => _ANCVisitsState();

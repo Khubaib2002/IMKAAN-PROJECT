@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:imkaan/screens/mental.dart';
+import 'package:imkaan/mental/mhome.dart';
 import 'package:imkaan/screens/maternity/searchorupdate.dart';
 import 'package:imkaan/services/auth.dart';
 
@@ -131,7 +131,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const MentalHealth(),
+                          builder: (context) => const Msearchorupdate(),
                         ),
                       );
                     },
@@ -152,11 +152,11 @@ class HoverableDashboardCard extends StatefulWidget {
   final VoidCallback onPressed;
 
   const HoverableDashboardCard({
-    Key? key,
+    super.key,
     required this.label,
     required this.imagePath,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<HoverableDashboardCard> createState() => _HoverableDashboardCardState();

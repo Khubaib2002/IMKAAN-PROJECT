@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 class AntenatalDeliveryCard extends StatefulWidget {
   final String patientId, name;
-  const AntenatalDeliveryCard({required this.patientId, required this.name});
+  const AntenatalDeliveryCard({super.key, required this.patientId, required this.name});
 
   @override
   State<AntenatalDeliveryCard> createState() => _AntenatalDeliveryCardState();
@@ -347,7 +347,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                   });
                 },
               );
-            }).toList(),
+            }),
             const SizedBox(height: 20),
             const Text(
               'Obstetric History',
@@ -363,7 +363,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                   });
                 },
               );
-            }).toList(),
+            }),
             const SizedBox(height: 20),
             const Text(
               'General Medical',
@@ -379,7 +379,7 @@ class _AntenatalDeliveryCardState extends State<AntenatalDeliveryCard> {
                   });
                 },
               );
-            }).toList(),
+            }),
             const SizedBox(height: 20),
             TextField(
               controller: commentsController,

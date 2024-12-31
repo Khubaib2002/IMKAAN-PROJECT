@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:imkaan/screens/maternity/search/searchpatient.dart';
-import 'package:imkaan/services/db.dart';
+import 'package:imkaan/mental/update.dart';
 
-class Searchorupdate extends StatelessWidget {
-  const Searchorupdate({super.key});
+class Msearchorupdate extends StatelessWidget {
+  const Msearchorupdate({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +95,12 @@ class Searchorupdate extends StatelessWidget {
                     label: 'Search Patient',
                     icon: Icon(Icons.search),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SearchPatientPage(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const SearchPatientPage(),
+                      //   ),
+                      // );
                     },
                   ),
                   const SizedBox(width: 30),
@@ -112,7 +111,7 @@ class Searchorupdate extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const UpdateUserPage(),
+                          builder: (context) => const UpdateUser(),
                         ),
                       );
                     },

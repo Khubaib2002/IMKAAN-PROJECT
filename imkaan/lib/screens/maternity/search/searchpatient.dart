@@ -27,19 +27,19 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
       final nameQuery = FirebaseFirestore.instance
           .collection('Patients')
           .where('name', isGreaterThanOrEqualTo: searchKey)
-          .where('name', isLessThan: searchKey + '\uf8ff')
+          .where('name', isLessThan: '$searchKey\uf8ff')
           .snapshots();
 
       final capitalNameQuery = FirebaseFirestore.instance
           .collection('Patients')
           .where('Name', isGreaterThanOrEqualTo: searchKey)
-          .where('Name', isLessThan: searchKey + '\uf8ff')
+          .where('Name', isLessThan: '$searchKey\uf8ff')
           .snapshots();
 
       final patientIdQuery = FirebaseFirestore.instance
           .collection('Patients')
           .where(FieldPath.documentId, isGreaterThanOrEqualTo: searchKey)
-          .where(FieldPath.documentId, isLessThan: searchKey + '\uf8ff')
+          .where(FieldPath.documentId, isLessThan: '$searchKey\uf8ff')
           .snapshots();
 
       // Combine the results of the three queries
@@ -224,10 +224,10 @@ class PatientDetailTabsScreen extends StatelessWidget {
   final String patientName;
 
   const PatientDetailTabsScreen({
-    Key? key,
+    super.key,
     required this.patientId,
     required this.patientName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -576,8 +576,7 @@ class _ANCCardsTab extends State<ANCCardsTab> {
 class DetailedDeliveryScreen extends StatelessWidget {
   final Map<String, dynamic> deliveryData;
 
-  const DetailedDeliveryScreen({Key? key, required this.deliveryData})
-      : super(key: key);
+  const DetailedDeliveryScreen({super.key, required this.deliveryData});
 
   Widget buildInfoTile(String label, String value) {
     return Padding(
@@ -706,8 +705,7 @@ class DetailedDeliveryScreen extends StatelessWidget {
 class PreviousDeliveriesDetailedScreen extends StatelessWidget {
   final Map<String, dynamic> deliveryData;
 
-  const PreviousDeliveriesDetailedScreen({Key? key, required this.deliveryData})
-      : super(key: key);
+  const PreviousDeliveriesDetailedScreen({super.key, required this.deliveryData});
 
   Widget buildInfoTile(String label, String value) {
     return Padding(
@@ -784,8 +782,7 @@ class PreviousDeliveriesDetailedScreen extends StatelessWidget {
 class MedicalFormsDetailedScreen extends StatelessWidget {
   final Map<String, dynamic> medicalFormData;
 
-  const MedicalFormsDetailedScreen({Key? key, required this.medicalFormData})
-      : super(key: key);
+  const MedicalFormsDetailedScreen({super.key, required this.medicalFormData});
 
   Widget buildInfoTile(String label, String value) {
     return Padding(

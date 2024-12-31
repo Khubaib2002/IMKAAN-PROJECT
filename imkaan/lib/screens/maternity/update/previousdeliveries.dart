@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 class Previousdeliveries extends StatefulWidget {
   final String patientId, name;
-  const Previousdeliveries({required this.patientId, required this.name});
+  const Previousdeliveries({super.key, required this.patientId, required this.name});
 
   @override
   State<Previousdeliveries> createState() => _PreviousdeliveriesState();

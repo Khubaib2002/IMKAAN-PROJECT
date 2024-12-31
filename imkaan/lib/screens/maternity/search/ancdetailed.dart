@@ -7,11 +7,10 @@ class ANCDetailedScreen extends StatelessWidget {
   final String cardId;
 
   const ANCDetailedScreen(
-      {Key? key,
+      {super.key,
       required this.ancData,
       required this.patientId,
-      required this.cardId})
-      : super(key: key);
+      required this.cardId});
 
   Widget buildInfoTile(String label, String value) {
     return Padding(
@@ -140,8 +139,7 @@ class ANCVisitsScreen extends StatelessWidget {
   final String patientId, cardId;
 
   const ANCVisitsScreen(
-      {Key? key, required this.patientId, required this.cardId})
-      : super(key: key);
+      {super.key, required this.patientId, required this.cardId});
 
   Widget buildVisitTile(String label, String value) {
     return Padding(

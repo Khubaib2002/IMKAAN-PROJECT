@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class DeliveryScreen extends StatefulWidget {
   final String patientId;
 
-  const DeliveryScreen({required this.patientId});
+  const DeliveryScreen({super.key, required this.patientId});
 
   @override
   _DeliveryScreenState createState() => _DeliveryScreenState();

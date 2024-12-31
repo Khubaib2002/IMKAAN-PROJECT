@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 class MedicalForm extends StatefulWidget {
   final String patientId, name;
-  const MedicalForm({required this.patientId, required this.name});
+  const MedicalForm({super.key, required this.patientId, required this.name});
 
   @override
   State<MedicalForm> createState() => _MedicalFormState();
