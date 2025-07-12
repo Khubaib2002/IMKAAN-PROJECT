@@ -19,7 +19,7 @@ class Searchorupdate extends StatelessWidget {
             Text(
               'Patient Management',
               style: GoogleFonts.poppins(
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 70, 61, 1),
               ),

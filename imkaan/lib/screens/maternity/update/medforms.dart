@@ -157,10 +157,39 @@ class _MedicalFormState extends State<MedicalForm> {
           ),
           backgroundColor: const Color(0xFFFFCA03), // Yellow-themed AppBar
         ),
-        body: const Center(
-          child: Text(
-            'Please select a patient to add or update medical records.',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFFFF9C4),
+                Color(0xFFFFECB3)
+              ], // Soft yellow gradient
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.health_and_safety, // Relevant medical icon
+                size: 100, // Slightly larger for emphasis
+                color: Color(0xFFFFCA03), // Bright yellow
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Please select a patient to add or update medical records.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8D6E63), // A complementary brown tone
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       );
@@ -292,11 +321,12 @@ class _MedicalFormState extends State<MedicalForm> {
                   toggleMode(false);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  backgroundColor: Color.fromARGB(255, 70, 61, 1),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0, vertical: 12.0),
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.w900, fontSize: 16),
                 ),
                 child: Padding(
                   padding:

@@ -157,6 +157,12 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
         setState(() {
           nameController.text = document['name'] ?? '';
           addressController.text = document['address'] ?? '';
+          medicalHistoryController.text = document['medical_history'] ?? '';
+          gravidaController.text = document['Gravida']?.toString() ?? '';
+          paraController.text = document['Para']?.toString() ?? '';
+          abortionController.text = document['Abortion']?.toString() ?? '';
+          ancConsultation = document['ANC_consultation'] ?? false;
+          relationController.text = document['relation'] ?? '';
           if (document['DOB'] != null) {
             dobController.text = document['DOB'];
             DateFormat format = DateFormat("MMMM d, yyyy 'at' h:mm:ss a z");
@@ -165,13 +171,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
           } else {
             dobController.clear();
           }
-          medicalHistoryController.text = document['medical_history'] ?? '';
-          gravidaController.text = document['Gravida']?.toString() ?? '';
-          paraController.text = document['Para']?.toString() ?? '';
-          abortionController.text = document['Abortion']?.toString() ?? '';
-          ancConsultation = document['ANC_consultation'] ?? false;
-          relationController.text = document['relation'] ?? '';
-          // pidController.text = pid;
+          // pidController.text = pid;  q
         });
       } else {
         clearFields();
@@ -234,8 +234,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             Text(
               isUpdating ? 'Update Patient' : 'Add New Patient',
               style: GoogleFonts.poppins(
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 70, 61, 1),
               ),
               textAlign: TextAlign.center,
@@ -260,23 +260,45 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             children: [
               Row(
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => toggleMode(false),
-                      child: const Text('Add New Patient'),
+                  if (isUpdating) ...{
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => toggleMode(false),
+                        child: const Text('Add New Patient'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black87,
+                          backgroundColor: Color.fromARGB(255, 250, 242, 214),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 12.0),
+                          elevation: 8.0,
+                          textStyle:
+                              const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => toggleMode(true),
-                      child: const Text('Update Existing Patient'),
+                  },
+                  if (!isUpdating) ...{
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => toggleMode(true),
+                        child: const Text('Update Existing Patient'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black87,
+                          backgroundColor: Color.fromARGB(255, 250, 242, 214),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 12.0),
+                          elevation: 8.0,
+                          textStyle:
+                              const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                  ),
+                  },
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               if (isUpdating) ...{
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
@@ -303,6 +325,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         }
                       },
                       child: const Text('Search'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black87,
+                        backgroundColor: const Color(0xFFFFCA03),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32.0, vertical: 12.0),
+                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -469,64 +498,112 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   }
                 },
                 child: Text(isUpdating ? 'Update Patient' : 'Add Patient'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DeliveryScreen(
-                        patientId: currentPatientId,
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Delivery Files'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Previousdeliveries(
-                        patientId: currentPatientId,
-                        name: nameController.text,
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Previous Deliveries'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MedicalForm(
-                            patientId: currentPatientId,
-                            name: nameController.text)),
-                  );
-                },
-                child: const Text('Medical Forms'),
-              ),
-              const SizedBox(height: 10),
-              Visibility(
-                visible: ancConsultation,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AntenatalDeliveryCard(
-                              patientId: currentPatientId,
-                              name: nameController.text)),
-                    );
-                  },
-                  child: const Text('ANC Card Info'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  backgroundColor: Color.fromARGB(255, 70, 61, 1),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0, vertical: 12.0),
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.w900, fontSize: 16),
                 ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 4,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeliveryScreen(
+                            patientId: currentPatientId,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Delivery Files'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black87,
+                      backgroundColor: const Color(0xFFFFCA03),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Previousdeliveries(
+                            patientId: currentPatientId,
+                            name: nameController.text,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Previous Deliveries'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black87,
+                      backgroundColor: const Color(0xFFFFCA03),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MedicalForm(
+                                patientId: currentPatientId,
+                                name: nameController.text)),
+                      );
+                    },
+                    child: const Text('Medical Forms'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black87,
+                      backgroundColor: const Color(0xFFFFCA03),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Visibility(
+                    visible: ancConsultation,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AntenatalDeliveryCard(
+                                  patientId: currentPatientId,
+                                  name: nameController.text)),
+                        );
+                      },
+                      child: const Text('ANC Card Info'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black87,
+                        backgroundColor: const Color(0xFFFFCA03),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 12.0),
+                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  // const SizedBox(height: 10),
+                ],
               ),
             ],
           ),

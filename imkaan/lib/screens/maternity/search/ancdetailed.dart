@@ -14,7 +14,7 @@ class ANCDetailedScreen extends StatelessWidget {
 
   Widget buildInfoTile(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -22,15 +22,18 @@ class ANCDetailedScreen extends StatelessWidget {
             flex: 2,
             child: Text(
               label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Color(0xFF6A4E00), // Dark yellow for labels
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value.isNotEmpty ? value : 'N/A',
-              style: const TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0, color: Colors.black87),
             ),
           ),
         ],
@@ -53,7 +56,11 @@ class ANCDetailedScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+            color: Color(0xFF6A4E00),
+          ),
         ),
         const Divider(),
         ...trueValues.map((value) => Padding(
@@ -86,7 +93,7 @@ class ANCDetailedScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'ANC Details',
+              'Antenatal, Labor, and Delivery Cards Details',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -100,7 +107,7 @@ class ANCDetailedScreen extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: const Color(0xFFFFCA03),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow background
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -109,7 +116,11 @@ class ANCDetailedScreen extends StatelessWidget {
           children: [
             const Text(
               'General Information',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
             ),
             const Divider(),
             buildInfoTile('ANC Reg No', ancData['ANC Reg No'] ?? ''),
@@ -127,6 +138,13 @@ class ANCDetailedScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => navigateToVisits(context),
               child: const Text('View Visits Information'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black87,
+                backgroundColor: const Color(0xFFFFCA03),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0, vertical: 12.0),
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
@@ -143,7 +161,7 @@ class ANCVisitsScreen extends StatelessWidget {
 
   Widget buildVisitTile(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -151,15 +169,18 @@ class ANCVisitsScreen extends StatelessWidget {
             flex: 2,
             child: Text(
               label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Color(0xFF6A4E00), // Dark yellow for labels
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value.isNotEmpty ? value : 'N/A',
-              style: const TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0, color: Colors.black87),
             ),
           ),
         ],
@@ -189,7 +210,7 @@ class ANCVisitsScreen extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: const Color(0xFFFFCA03),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow background
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -215,8 +236,13 @@ class ANCVisitsScreen extends StatelessWidget {
 
               return Card(
                 margin: const EdgeInsets.all(10.0),
+                elevation: 8.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                color: Color.fromARGB(255, 250, 245, 227),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -224,7 +250,10 @@ class ANCVisitsScreen extends StatelessWidget {
                       const Text(
                         'Examination',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18.0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Color(0xFF6A4E00),
+                        ),
                       ),
                       const Divider(),
                       buildVisitTile(
@@ -249,7 +278,10 @@ class ANCVisitsScreen extends StatelessWidget {
                       const Text(
                         'Laboratory Tests',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18.0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Color(0xFF6A4E00),
+                        ),
                       ),
                       const Divider(),
                       buildVisitTile('Haemoglobin', data['Haemoglobin'] ?? ''),
@@ -263,7 +295,10 @@ class ANCVisitsScreen extends StatelessWidget {
                       const Text(
                         'Medication',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18.0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Color(0xFF6A4E00),
+                        ),
                       ),
                       const Divider(),
                       buildVisitTile('Ferrous Sulphate/Folic Acid',
@@ -277,7 +312,10 @@ class ANCVisitsScreen extends StatelessWidget {
                       const Text(
                         'Next Appointment',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18.0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Color(0xFF6A4E00),
+                        ),
                       ),
                       const Divider(),
                       buildVisitTile(

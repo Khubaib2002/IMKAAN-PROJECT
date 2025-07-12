@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/screens/maternity/search/ancdetailed.dart';
+import 'package:imkaan/screens/maternity/search/details.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +72,7 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
             Text(
               'Search Patients',
               style: GoogleFonts.poppins(
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 70, 61, 1),
               ),
@@ -173,8 +174,10 @@ class _SearchPatientPageState extends State<SearchPatientPage> {
                           );
                         },
                         child: Card(
-                          margin: const EdgeInsets.all(10.0),
+                          // margin: const EdgeInsets.all(10.0),
                           // color: Colors.amber,
+                          // color: Color(0xFFFFF4B2), // Light yellow background
+
                           elevation: 8.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
@@ -232,7 +235,7 @@ class PatientDetailTabsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: Row(
@@ -240,9 +243,9 @@ class PatientDetailTabsScreen extends StatelessWidget {
             children: [
               Text(
                 'Details - $patientName',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 22,
                   color: Colors.black87,
                 ),
               ),
@@ -253,14 +256,17 @@ class PatientDetailTabsScreen extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: const Color(0xFFFFCA03),
-          bottom: const TabBar(
+          backgroundColor: Color(0xFFFFCA03),
+          bottom: TabBar(
             indicatorColor: Colors.black,
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelColor: Colors.black54,
+            labelColor: Color(0xFF6A4E00), // Dark yellow for selected tab
+
             tabs: [
+              Tab(text: 'Personal Information'),
               Tab(text: 'Delivery Files'),
-              Tab(text: 'Previous Deliveries'),
+              Tab(text: 'Prev Deliveries'),
               Tab(text: 'Medical Forms'),
               Tab(text: 'ANC Cards'),
             ],
@@ -268,6 +274,7 @@ class PatientDetailTabsScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
+            PatientDetailsPage(patientId: patientId),
             DeliveryFilesTab(patientId: patientId),
             PreviousDeliveriesTab(patientId: patientId),
             MedicalFormsTab(patientId: patientId),
@@ -293,8 +300,8 @@ class _DeliveryFilesTabState extends State<DeliveryFilesTab> {
     return Center(
       child: Column(
         children: [
-          Text('Delivery Files',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          // Text('Delivery Files',
+          //     style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -313,6 +320,7 @@ class _DeliveryFilesTabState extends State<DeliveryFilesTab> {
                           style: TextStyle(fontSize: 16.0)));
                 }
                 return ListView(
+                  padding: EdgeInsets.all(16.0),
                   children: snapshot.data!.docs.map<Widget>((doc) {
                     final data = doc.data() as Map<String, dynamic>?;
                     if (data == null) return const SizedBox.shrink();
@@ -332,10 +340,20 @@ class _DeliveryFilesTabState extends State<DeliveryFilesTab> {
                             ));
                       },
                       child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        color: Color(0xFFFFF4B2), // Light yellow background
+                        elevation: 8.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+
+                        // margin: const EdgeInsets.all(10.0),
                         child: ListTile(
-                          title: Text("Admission Date: $admissionDate",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(
+                            "Admission Date: $admissionDate",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                                color: Color(0xFF6A4E00)), // Dark yellow text
+                          ),
                           subtitle: Text("Diagnosis: $diagnosis"),
                           trailing: Text("Procedure: $procedure"),
                         ),
@@ -366,9 +384,9 @@ class _PreviousDeliveriesTabState extends State<PreviousDeliveriesTab> {
     return Center(
       child: Column(
         children: [
-          Text('Previous Deliveries',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
+          // Text('Previous Deliveries',
+          //     style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -386,6 +404,7 @@ class _PreviousDeliveriesTabState extends State<PreviousDeliveriesTab> {
                       child: Text('No Previous Deliveries Found'));
                 }
                 return ListView(
+                  padding: EdgeInsets.all(16.0),
                   children: snapshot.data!.docs.map<Widget>((doc) {
                     final data = doc.data() as Map<String, dynamic>?;
                     if (data == null) return const SizedBox.shrink();
@@ -407,10 +426,17 @@ class _PreviousDeliveriesTabState extends State<PreviousDeliveriesTab> {
                         );
                       },
                       child: Card(
-                        margin: const EdgeInsets.all(10.0),
+                        color: Color(0xFFFFF4B2), // Light yellow background
+
+                        // margin: const EdgeInsets.all(10.0),
                         child: ListTile(
-                          title: Text("Date of Delivery: $date",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(
+                            "Date of Delivery: $date",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                                color: Color(0xFF6A4E00)), // Dark yellow text
+                          ),
                           subtitle: Text("Type/Mode: $type"),
                           trailing: Text("Location: $location"),
                         ),
@@ -441,9 +467,9 @@ class _MedicalFormsTabState extends State<MedicalFormsTab> {
     return Center(
       child: Column(
         children: [
-          Text('Medical Forms',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
+          // Text('Medical Forms',
+          //     style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -460,6 +486,7 @@ class _MedicalFormsTabState extends State<MedicalFormsTab> {
                   return const Center(child: Text('No Medical Forms Found'));
                 }
                 return ListView(
+                  padding: EdgeInsets.all(16.0),
                   children: snapshot.data!.docs.map<Widget>((doc) {
                     final data = doc.data() as Map<String, dynamic>?;
                     if (data == null) return const SizedBox.shrink();
@@ -480,10 +507,17 @@ class _MedicalFormsTabState extends State<MedicalFormsTab> {
                         );
                       },
                       child: Card(
-                        margin: const EdgeInsets.all(10.0),
+                        color: Color(0xFFFFF4B2), // Light yellow background
+
+                        // margin: const EdgeInsets.all(10.0),
                         child: ListTile(
-                          title: Text("File no: $fileno",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(
+                            "File no: $fileno",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                                color: Color(0xFF6A4E00)), // Dark yellow text
+                          ),
                           subtitle: Text("Date $date"),
                           trailing: Text("Diagnosis: $diagnosis"),
                         ),
@@ -500,285 +534,6 @@ class _MedicalFormsTabState extends State<MedicalFormsTab> {
   }
 }
 
-class ANCCardsTab extends StatefulWidget {
-  final String patientId;
-  const ANCCardsTab({super.key, required this.patientId});
-
-  @override
-  State<ANCCardsTab> createState() => _ANCCardsTab();
-}
-
-class _ANCCardsTab extends State<ANCCardsTab> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Text('Antenatal, Labor, and Delivery Cards',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Patients')
-                  .doc(widget.patientId)
-                  .collection('AntenatalRecords')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No ANC Cards Found'));
-                }
-                return ListView(
-                  children: snapshot.data!.docs.map<Widget>((doc) {
-                    final data = doc.data() as Map<String, dynamic>?;
-                    if (data == null) return const SizedBox.shrink();
-
-                    final ancregno = data['ANC Reg No'] ?? 'Unknown';
-                    final date = data['Date'] ?? 'N/A';
-                    final time = data['Time'] ?? 'N/A';
-
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ANCDetailedScreen(
-                                  ancData: data,
-                                  patientId: widget.patientId,
-                                  cardId: doc.id)),
-                        );
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.all(10.0),
-                        child: ListTile(
-                          title: Text("ANC Reg No: $ancregno",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text("Date: $date"),
-                          trailing: Text("Time: $time"),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class DetailedDeliveryScreen extends StatelessWidget {
-  final Map<String, dynamic> deliveryData;
-
-  const DetailedDeliveryScreen({super.key, required this.deliveryData});
-
-  Widget buildInfoTile(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value.isNotEmpty ? value : 'N/A',
-              style: const TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Delivery File Details',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black87,
-              ),
-            ),
-            Image.asset(
-              'logo.png',
-              height: 40,
-              fit: BoxFit.contain,
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFFFFCA03),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Delivery Information',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-            const Divider(),
-            buildInfoTile(
-                'Admission Date', deliveryData['admissiondate'] ?? ''),
-            buildInfoTile('Blood Group', deliveryData['bloodgroup'] ?? ''),
-            buildInfoTile('Blood Pressure', deliveryData['bp'] ?? ''),
-            buildInfoTile(
-                'Diagnosis', deliveryData['compaintsdiagnosis'] ?? ''),
-            buildInfoTile('Fundal Height', deliveryData['fundalheight'] ?? ''),
-            buildInfoTile('FHR', deliveryData['fhr'] ?? ''),
-            buildInfoTile(
-                'Discharge Date', deliveryData['dischargeDate'] ?? ''),
-            buildInfoTile(
-                'Discharge Done By', deliveryData['dischargeDoneBy'] ?? ''),
-            buildInfoTile('Mode of Delivery', deliveryData['mode'] ?? ''),
-            buildInfoTile('Mother\'s BP', deliveryData['motherBP'] ?? ''),
-            buildInfoTile('Mother\'s Pulse', deliveryData['motherPulse'] ?? ''),
-            buildInfoTile(
-                'Mother\'s Temperature', deliveryData['motherTemp'] ?? ''),
-            buildInfoTile('Diagnosis', deliveryData['selectedDiagnosis'] ?? ''),
-            buildInfoTile('Procedure', deliveryData['selectedProcedure'] ?? ''),
-            buildInfoTile('Special Recommendations',
-                deliveryData['specialRecommendations'] ?? ''),
-            buildInfoTile('Length of Stay', deliveryData['lengthOfStay'] ?? ''),
-            buildInfoTile('Engagement', deliveryData['engagement'] ?? ''),
-            buildInfoTile('Dilation (cm)', deliveryData['dilation_cm'] ?? ''),
-            buildInfoTile('Effacement', deliveryData['effacement'] ?? ''),
-            buildInfoTile(
-                'Presenting Part', deliveryData['presentingPart'] ?? ''),
-            buildInfoTile('Lie', deliveryData['lie'] ?? ''),
-            buildInfoTile('Weight', deliveryData['weight'] ?? ''),
-            const SizedBox(height: 20),
-            const Text(
-              'Postnatal Care',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-            const Divider(),
-            buildInfoTile('Exclusive Breastfeeding',
-                deliveryData['exclusivebreastfeeding'] ?? ''),
-            buildInfoTile(
-                'Postnatal Care Provided', deliveryData['postnatalCare'] ?? ''),
-            buildInfoTile('Lochia Normal', deliveryData['lochiaNormal'] ?? ''),
-            buildInfoTile(
-                'Uterus Contracted', deliveryData['uterusContracted'] ?? ''),
-            buildInfoTile('Vitamin A Given', deliveryData['vitaminA'] ?? ''),
-            buildInfoTile('Family Planning Provided',
-                deliveryData['familyPlanning'] ?? ''),
-            const SizedBox(height: 20),
-            const Text(
-              'Newborn Information',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-            const Divider(),
-            buildInfoTile('Newborn Passed Stool',
-                deliveryData['newbornPassedStool'] ?? ''),
-            buildInfoTile('Newborn Passed Urine',
-                deliveryData['newbornPassedUrine'] ?? ''),
-            buildInfoTile(
-                'Newborn Temperature', deliveryData['newbornTemp'] ?? ''),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PreviousDeliveriesDetailedScreen extends StatelessWidget {
-  final Map<String, dynamic> deliveryData;
-
-  const PreviousDeliveriesDetailedScreen({super.key, required this.deliveryData});
-
-  Widget buildInfoTile(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value.isNotEmpty ? value : 'N/A',
-              style: const TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Previous Delivery Details',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black87,
-              ),
-            ),
-            Image.asset(
-              'logo.png',
-              height: 40,
-              fit: BoxFit.contain,
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFFFFCA03),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Delivery Information',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-            const Divider(),
-            buildInfoTile('Baby Alive', deliveryData['Baby Alive'] ?? ''),
-            buildInfoTile(
-                'Date of Delivery', deliveryData['Date of Delivery'] ?? ''),
-            buildInfoTile('Location', deliveryData['Location'] ?? ''),
-            buildInfoTile('Type', deliveryData['Type'] ?? ''),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class MedicalFormsDetailedScreen extends StatelessWidget {
   final Map<String, dynamic> medicalFormData;
 
@@ -786,7 +541,7 @@ class MedicalFormsDetailedScreen extends StatelessWidget {
 
   Widget buildInfoTile(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -794,15 +549,18 @@ class MedicalFormsDetailedScreen extends StatelessWidget {
             flex: 2,
             child: Text(
               label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Color(0xFF6A4E00), // Dark yellow for labels
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value.isNotEmpty ? value : 'N/A',
-              style: const TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0, color: Colors.black87),
             ),
           ),
         ],
@@ -841,7 +599,11 @@ class MedicalFormsDetailedScreen extends StatelessWidget {
           children: [
             const Text(
               'Medical Form Information',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
             ),
             const Divider(),
             buildInfoTile('File Number', medicalFormData['fileno'] ?? ''),
@@ -856,3 +618,755 @@ class MedicalFormsDetailedScreen extends StatelessWidget {
     );
   }
 }
+
+class ANCCardsTab extends StatefulWidget {
+  final String patientId;
+  const ANCCardsTab({super.key, required this.patientId});
+
+  @override
+  State<ANCCardsTab> createState() => _ANCCardsTab();
+}
+
+class _ANCCardsTab extends State<ANCCardsTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          // Text('Antenatal, Labor, and Delivery Cards',
+          //     style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 10),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Patients')
+                  .doc(widget.patientId)
+                  .collection('AntenatalRecords')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No ANC Cards Found'));
+                }
+                return ListView(
+                  padding: EdgeInsets.all(16.0),
+                  children: snapshot.data!.docs.map<Widget>((doc) {
+                    final data = doc.data() as Map<String, dynamic>?;
+                    if (data == null) return const SizedBox.shrink();
+
+                    final ancregno = data['ANC Reg No'] ?? 'Unknown';
+                    final date = data['Date'] ?? 'N/A';
+                    final time = data['Time'] ?? 'N/A';
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ANCDetailedScreen(
+                                  ancData: data,
+                                  patientId: widget.patientId,
+                                  cardId: doc.id)),
+                        );
+                      },
+                      child: Card(
+                        color: Color(0xFFFFF4B2), // Light yellow background
+
+                        // margin: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Text(
+                            "ANC Reg No: $ancregno",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                                color: Color(0xFF6A4E00)), // Dark yellow text
+                          ),
+                          subtitle: Text("Date: $date"),
+                          trailing: Text("Time: $time"),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DetailedDeliveryScreen extends StatelessWidget {
+  final Map<String, dynamic> deliveryData;
+
+  const DetailedDeliveryScreen({super.key, required this.deliveryData});
+
+  Widget buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Color(0xFF6A4E00), // Dark yellow for labels
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: const TextStyle(fontSize: 16.0, color: Colors.black87),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Delivery File Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03), // Yellow background
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Delivery Information',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            buildInfoTile('File no', deliveryData['fileno'] ?? ''),
+            buildInfoTile(
+                'Admission Date', deliveryData['admissiondate'] ?? ''),
+            buildInfoTile(
+                'Time of Admission', deliveryData['admissiontime'] ?? ''),
+            const SizedBox(height: 20),
+
+            const Text(
+              'Examination on Admission',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+
+            buildInfoTile(
+                'Week of Pregnancy', deliveryData['weekofpreg'] ?? ''),
+            buildInfoTile('Fundal Height', deliveryData['fundalheight'] ?? ''),
+            buildInfoTile('Fetal Heart Rate', deliveryData['fhr'] ?? ''),
+            buildInfoTile(
+                'Fetal Movement (FM)', deliveryData['selectedfm'] ?? ''),
+            buildInfoTile('Lie', deliveryData['lie'] ?? ''),
+            buildInfoTile('Weight', deliveryData['weight'] ?? ''),
+            buildInfoTile('Blood Pressure', deliveryData['bp'] ?? ''),
+            buildInfoTile('Pulse', deliveryData['pulse'] ?? ''),
+            buildInfoTile('Temperature', deliveryData['temp'] ?? ''),
+
+            // 'conjunctivitis': conjunctivitis,
+            // 'bloodgroup': bloodgroup,
+            // 'hcv': hcv,
+            // 'hbv': hbv,
+            // 'hb': hb,
+            // 'compaintsdiagnosis': compaintsdiagnosis,
+            // // vag
+            // 'effacement': effacement,
+            // 'consistency': consistency,
+            // 'dilation_cm': dilation,
+            // 'presentingPart': presentingPart,
+            // 'engagement': engagement,
+            // 'pvbleeding': pvbleeding,
+            // 'membrances': selectedmembrance,
+            // 'vagdate': vagdate,
+            // 'vagtime': vagtime,
+            // 'liqour': selectedliqour,
+            // // discharge info
+            // 'dischargeDate': dischargeDate,
+            // 'lengthOfStay': lengthOfStay,
+            // 'mode': mode,
+            // 'dischargeDoneBy': dischargeDoneBy,
+            // 'motherBP': motherBP,
+            // 'motherTemp': motherTemp,
+            // 'motherPulse': motherPulse,
+            // 'passedUrine': passedUrine,
+            // 'uterusContracted': uterusContracted,
+            // 'lochiaNormal': lochiaNormal,
+            // 'vitaminA': vitaminA,
+            // 'specialRecommendations': specialRecommendations,
+            // 'selectedProcedure': selectedProcedure,
+            // 'selectedDiagnosis': selectedDiagnosis,
+            // 'postnatalCare': postnatalCare,
+            // 'ferrousSulphate': ferrousSulphate,
+            // 'folicaAcid': folicAcid,
+            // 'othermeds': othermeds,
+            // 'familyPlanning': familyPlanning,
+            // 'lowBirthWeight': lowBirthWeight,
+            // 'dangerSign': dangerSign,
+            // 'newbornTemp': newbornTemp,
+            // 'newbornPassedStool': newbornPassedStool,
+            // 'newbornPassedUrine': newbornPassedUrine,
+            // 'exclusivebreastfeeding': exclusivebreastfeeding,
+            // 'breastfeedingStatus': breastfeedingStatus,
+            // 'hepatitisBStatus': hepatitisBStatus,
+            // 'consultationdate': consultationdate,
+
+            buildInfoTile(
+                'Conjunctivitis', deliveryData['conjunctivitis'] ?? ''),
+            buildInfoTile('Blood Group', deliveryData['bloodgroup'] ?? ''),
+            buildInfoTile('HCV', deliveryData['hcv'] ?? ''),
+            buildInfoTile('HBV', deliveryData['hbv'] ?? ''),
+            buildInfoTile('HB', deliveryData['hb'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Compaints/Diagnosis',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+
+            buildInfoTile('Compaints/Diagnosis',
+                deliveryData['compaintsdiagnosis'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Vaginal Examination',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            buildInfoTile('Effacement', deliveryData['effacement'] ?? ''),
+            buildInfoTile('Consistency', deliveryData['consistency'] ?? ''),
+            buildInfoTile('Dilation (cm)', deliveryData['dilation_cm'] ?? ''),
+            buildInfoTile(
+                'Presenting Part', deliveryData['presentingPart'] ?? ''),
+            buildInfoTile('Engagement', deliveryData['engagement'] ?? ''),
+            buildInfoTile('PV Bleeding', deliveryData['pvbleeding'] ?? ''),
+            buildInfoTile('Membrance', deliveryData['membrances'] ?? ''),
+
+            buildInfoTile('PV Bleeding', deliveryData['pvbleeding'] ?? ''),
+            buildInfoTile('Membrance', deliveryData['membrances'] ?? ''),
+            buildInfoTile('Liqour', deliveryData['liqour'] ?? ''),
+            buildInfoTile(
+                'Date of Vaginal Examination', deliveryData['vagdate'] ?? ''),
+            buildInfoTile(
+                'Time of Vaginal Examination', deliveryData['vagtime'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Discharge Information',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+
+            buildInfoTile(
+                'Discharge Date', deliveryData['dischargeDate'] ?? ''),
+            buildInfoTile('Length of Stay', deliveryData['lengthofstay'] ?? ''),
+
+            buildInfoTile('Mode of Delivery', deliveryData['mode'] ?? ''),
+            buildInfoTile(
+                'Discharge Done By', deliveryData['dischargeDoneBy'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Examination at Discharge',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            const Text(
+              'Mother Information',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+
+            buildInfoTile('Mother\'s BP', deliveryData['motherBP'] ?? ''),
+            buildInfoTile(
+                'Mother\'s Temperature', deliveryData['motherTemp'] ?? ''),
+            buildInfoTile('Mother\'s Pulse', deliveryData['motherPulse'] ?? ''),
+            buildInfoTile('Passed Urine', deliveryData['passedUrine'] ?? ''),
+            buildInfoTile(
+                'Uterus Contracted', deliveryData['uterusContracted'] ?? ''),
+            buildInfoTile('Lochia Normal', deliveryData['lochiaNormal'] ?? ''),
+            buildInfoTile('Vitamin A Given', deliveryData['vitaminA'] ?? ''),
+            const SizedBox(height: 15),
+            const Text(
+              'Newborn Vitals',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            buildInfoTile('Temperature', deliveryData['newbornTemp'] ?? ''),
+            buildInfoTile('Newborn Passed Stool',
+                deliveryData['newbornPassedStool'] ?? ''),
+            buildInfoTile('Newborn Passed Urine',
+                deliveryData['newbornPassedUrine'] ?? ''),
+            buildInfoTile('Breast Feeding Status',
+                deliveryData['breastfeedingStatus'] ?? ''),
+            const SizedBox(height: 20),
+            buildInfoTile(
+                'Hepatitis B Status', deliveryData['hepatitisBStatus'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Health Education',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            buildInfoTile(
+                'Postnatal Care', deliveryData['postnatalcare'] ?? ''),
+            buildInfoTile(
+                'Family Planning', deliveryData['familyplanning'] ?? ''),
+            buildInfoTile('Exclusive Breastfeeding',
+                deliveryData['exclusivebreastfeeding'] ?? ''),
+            buildInfoTile(
+                'Low Birth Weight', deliveryData['lowBirthWeight'] ?? ''),
+            buildInfoTile('Danger Sign', deliveryData['dangerSign'] ?? ''),
+            buildInfoTile('Special Recommendations',
+                deliveryData['specialRecommendations'] ?? ''),
+            const SizedBox(height: 20),
+            buildInfoTile('Diagnosis', deliveryData['selectedDiagnosis'] ?? ''),
+            buildInfoTile('Procedure', deliveryData['selectedProcedure'] ?? ''),
+            const SizedBox(height: 20),
+            const Text(
+              'Treatment at Home',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            buildInfoTile(
+                'Ferrous Sulphate', deliveryData['ferrousSulphate'] ?? ''),
+            buildInfoTile('Folic Acid', deliveryData['folicaAcid'] ?? ''),
+            buildInfoTile('Amount of All Medications Given',
+                deliveryData['othermeds'] ?? ''),
+            const SizedBox(height: 20),
+            const Divider(),
+            buildInfoTile('Post-Natal Consultation Date',
+                deliveryData['consultationdate'] ?? ''),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PreviousDeliveriesDetailedScreen extends StatelessWidget {
+  final Map<String, dynamic> deliveryData;
+
+  const PreviousDeliveriesDetailedScreen(
+      {super.key, required this.deliveryData});
+
+  Widget buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Color(0xFF6A4E00), // Dark yellow for labels
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: const TextStyle(fontSize: 16.0, color: Colors.black87),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Previous Delivery Details',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
+            ),
+            Image.asset(
+              'logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFFFCA03),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Delivery Information',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Color(0xFF6A4E00),
+              ),
+            ),
+            const Divider(),
+            buildInfoTile('Baby Alive', deliveryData['Baby Alive'] ?? ''),
+            buildInfoTile(
+                'Date of Delivery', deliveryData['Date of Delivery'] ?? ''),
+            buildInfoTile('Location', deliveryData['Location'] ?? ''),
+            buildInfoTile('Type', deliveryData['Type'] ?? ''),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// class DetailedDeliveryScreen extends StatelessWidget {
+//   final Map<String, dynamic> deliveryData;
+
+//   const DetailedDeliveryScreen({super.key, required this.deliveryData});
+
+//   Widget buildInfoTile(String label, String value) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             flex: 2,
+//             child: Text(
+//               label,
+//               style:
+//                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 3,
+//             child: Text(
+//               value.isNotEmpty ? value : 'N/A',
+//               style: const TextStyle(fontSize: 16.0),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(
+//               'Delivery File Details',
+//               style: TextStyle(
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: 20,
+//                 color: Colors.black87,
+//               ),
+//             ),
+//             Image.asset(
+//               'logo.png',
+//               height: 40,
+//               fit: BoxFit.contain,
+//             ),
+//           ],
+//         ),
+//         backgroundColor: const Color(0xFFFFCA03),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'Delivery Information',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile(
+//                 'Admission Date', deliveryData['admissiondate'] ?? ''),
+//             buildInfoTile('Blood Group', deliveryData['bloodgroup'] ?? ''),
+//             buildInfoTile('Blood Pressure', deliveryData['bp'] ?? ''),
+//             buildInfoTile(
+//                 'Diagnosis', deliveryData['compaintsdiagnosis'] ?? ''),
+//             buildInfoTile('Fundal Height', deliveryData['fundalheight'] ?? ''),
+//             buildInfoTile('FHR', deliveryData['fhr'] ?? ''),
+//             buildInfoTile(
+//                 'Discharge Date', deliveryData['dischargeDate'] ?? ''),
+//             buildInfoTile(
+//                 'Discharge Done By', deliveryData['dischargeDoneBy'] ?? ''),
+//             buildInfoTile('Mode of Delivery', deliveryData['mode'] ?? ''),
+//             buildInfoTile('Mother\'s BP', deliveryData['motherBP'] ?? ''),
+//             buildInfoTile('Mother\'s Pulse', deliveryData['motherPulse'] ?? ''),
+//             buildInfoTile(
+//                 'Mother\'s Temperature', deliveryData['motherTemp'] ?? ''),
+//             buildInfoTile('Diagnosis', deliveryData['selectedDiagnosis'] ?? ''),
+//             buildInfoTile('Procedure', deliveryData['selectedProcedure'] ?? ''),
+//             buildInfoTile('Special Recommendations',
+//                 deliveryData['specialRecommendations'] ?? ''),
+//             buildInfoTile('Length of Stay', deliveryData['lengthOfStay'] ?? ''),
+//             buildInfoTile('Engagement', deliveryData['engagement'] ?? ''),
+//             buildInfoTile('Dilation (cm)', deliveryData['dilation_cm'] ?? ''),
+//             buildInfoTile('Effacement', deliveryData['effacement'] ?? ''),
+//             buildInfoTile(
+//                 'Presenting Part', deliveryData['presentingPart'] ?? ''),
+//             buildInfoTile('Lie', deliveryData['lie'] ?? ''),
+//             buildInfoTile('Weight', deliveryData['weight'] ?? ''),
+//             const SizedBox(height: 20),
+//             const Text(
+//               'Postnatal Care',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile('Exclusive Breastfeeding',
+//                 deliveryData['exclusivebreastfeeding'] ?? ''),
+//             buildInfoTile(
+//                 'Postnatal Care Provided', deliveryData['postnatalCare'] ?? ''),
+//             buildInfoTile('Lochia Normal', deliveryData['lochiaNormal'] ?? ''),
+//             buildInfoTile(
+//                 'Uterus Contracted', deliveryData['uterusContracted'] ?? ''),
+//             buildInfoTile('Vitamin A Given', deliveryData['vitaminA'] ?? ''),
+//             buildInfoTile('Family Planning Provided',
+//                 deliveryData['familyPlanning'] ?? ''),
+//             const SizedBox(height: 20),
+//             const Text(
+//               'Newborn Information',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile('Newborn Passed Stool',
+//                 deliveryData['newbornPassedStool'] ?? ''),
+//             buildInfoTile('Newborn Passed Urine',
+//                 deliveryData['newbornPassedUrine'] ?? ''),
+//             buildInfoTile(
+//                 'Newborn Temperature', deliveryData['newbornTemp'] ?? ''),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class PreviousDeliveriesDetailedScreen extends StatelessWidget {
+//   final Map<String, dynamic> deliveryData;
+
+//   const PreviousDeliveriesDetailedScreen(
+//       {super.key, required this.deliveryData});
+
+//   Widget buildInfoTile(String label, String value) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             flex: 2,
+//             child: Text(
+//               label,
+//               style:
+//                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 3,
+//             child: Text(
+//               value.isNotEmpty ? value : 'N/A',
+//               style: const TextStyle(fontSize: 16.0),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(
+//               'Previous Delivery Details',
+//               style: TextStyle(
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: 20,
+//                 color: Colors.black87,
+//               ),
+//             ),
+//             Image.asset(
+//               'logo.png',
+//               height: 40,
+//               fit: BoxFit.contain,
+//             ),
+//           ],
+//         ),
+//         backgroundColor: const Color(0xFFFFCA03),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'Delivery Information',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile('Baby Alive', deliveryData['Baby Alive'] ?? ''),
+//             buildInfoTile(
+//                 'Date of Delivery', deliveryData['Date of Delivery'] ?? ''),
+//             buildInfoTile('Location', deliveryData['Location'] ?? ''),
+//             buildInfoTile('Type', deliveryData['Type'] ?? ''),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class MedicalFormsDetailedScreen extends StatelessWidget {
+//   final Map<String, dynamic> medicalFormData;
+
+//   const MedicalFormsDetailedScreen({super.key, required this.medicalFormData});
+
+//   Widget buildInfoTile(String label, String value) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Expanded(
+//             flex: 2,
+//             child: Text(
+//               label,
+//               style:
+//                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 3,
+//             child: Text(
+//               value.isNotEmpty ? value : 'N/A',
+//               style: const TextStyle(fontSize: 16.0),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(
+//               'Medical Form Details',
+//               style: TextStyle(
+//                 fontWeight: FontWeight.bold,
+//                 fontSize: 20,
+//                 color: Colors.black87,
+//               ),
+//             ),
+//             Image.asset(
+//               'logo.png',
+//               height: 40,
+//               fit: BoxFit.contain,
+//             ),
+//           ],
+//         ),
+//         backgroundColor: const Color(0xFFFFCA03),
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'Medical Form Information',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+//             ),
+//             const Divider(),
+//             buildInfoTile('File Number', medicalFormData['fileno'] ?? ''),
+//             buildInfoTile('Date', medicalFormData['Date'] ?? ''),
+//             buildInfoTile('BP/Temp', medicalFormData['BP/Temp'] ?? ''),
+//             buildInfoTile('Diagnosis', medicalFormData['Diagnosis'] ?? ''),
+//             buildInfoTile('Lab/Remarks', medicalFormData['Lab/Remarks'] ?? ''),
+//             buildInfoTile('Treatment', medicalFormData['Treatment'] ?? ''),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

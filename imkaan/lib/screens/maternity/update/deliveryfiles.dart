@@ -426,7 +426,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Antenatal, Labor, and Delivery Cards',
+                'Delivery Files',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -510,7 +510,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 const SizedBox(height: 20),
                 const Text(
                   'Enter new delivery file information here',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: Color(0xFF6A4E00),
+                  ),
                 ),
                 const Divider(),
                 const SizedBox(height: 10),
@@ -663,6 +667,19 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   decoration: const InputDecoration(labelText: 'PV Bleeding'),
                 ),
                 const SizedBox(height: 10),
+                _buildDropdown(selectedmembrance, 'Membrance', membrances,
+                    (value) {
+                  setState(() {
+                    selectedmembrance = value ?? '';
+                  });
+                }),
+                const SizedBox(height: 10),
+                _buildDropdown(selectedliqour, 'Liqour', liqours, (value) {
+                  setState(() {
+                    selectedliqour = value ?? '';
+                  });
+                }),
+                const SizedBox(height: 10),
                 TextField(
                   controller: vagdateController,
                   readOnly: true,
@@ -679,19 +696,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   decoration: const InputDecoration(
                       labelText: 'Time of Vaginal Examination'),
                 ),
-                const SizedBox(height: 10),
-                _buildDropdown(selectedmembrance, 'Membrance', membrances,
-                    (value) {
-                  setState(() {
-                    selectedmembrance = value ?? '';
-                  });
-                }),
-                const SizedBox(height: 10),
-                _buildDropdown(selectedliqour, 'Liqour', liqours, (value) {
-                  setState(() {
-                    selectedliqour = value ?? '';
-                  });
-                }),
                 const SizedBox(height: 10),
                 const Divider(),
                 const SizedBox(height: 10),
@@ -967,7 +971,15 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                       consultationdateController.text,
                     );
                   },
-                  child: const Text('Save Discharge Information'),
+                  child: const Text('Add Delivery File'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: Color.fromARGB(255, 70, 61, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32.0, vertical: 12.0),
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.w900, fontSize: 16),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -1224,6 +1236,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                             builder: (context, setState) {
                               return Card(
                                   margin: const EdgeInsets.all(10.0),
+                                  elevation: 8.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  color: Color.fromARGB(255, 250, 245, 227),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Column(
@@ -1234,8 +1251,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                         const Text(
                                           'Edit the information and hit \'Update\' to update this delivery file',
                                           style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                            color: Color(0xFF6A4E00),
+                                          ),
                                         ),
                                         const SizedBox(height: 10),
                                         TextField(
@@ -1884,7 +1903,21 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                                       'Previous Delivery File Updated Successfully!')),
                                             );
                                           },
-                                          child: const Text('Update Delivery'),
+                                          child: const Text(
+                                              'Update Delivery File'),
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor:
+                                                const Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                            backgroundColor:
+                                                Color.fromARGB(255, 70, 61, 1),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 32.0,
+                                                vertical: 12.0),
+                                            textStyle: const TextStyle(
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 16),
+                                          ),
                                         ),
                                       ],
                                     ),

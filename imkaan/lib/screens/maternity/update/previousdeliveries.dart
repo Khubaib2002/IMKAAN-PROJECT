@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
 class Previousdeliveries extends StatefulWidget {
   final String patientId, name;
-  const Previousdeliveries({super.key, required this.patientId, required this.name});
+  const Previousdeliveries(
+      {super.key, required this.patientId, required this.name});
 
   @override
   State<Previousdeliveries> createState() => _PreviousdeliveriesState();
@@ -134,8 +135,8 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                 'Previous Deliveries',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.black87,
+                  fontSize: 18.0,
+                  color: Color(0xFF6A4E00),
                 ),
               ),
               Image.asset(
@@ -281,11 +282,12 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                     toggleMode(false);
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                    foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: Color.fromARGB(255, 70, 61, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32.0, vertical: 12.0),
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.w900, fontSize: 16),
                   ),
                   child: Padding(
                     padding:
@@ -320,6 +322,12 @@ class _PreviousdeliveriesState extends State<Previousdeliveries> {
                       children: snapshot.data!.docs.map<Widget>((document) {
                         docid = document.id;
                         return Card(
+                          margin: const EdgeInsets.all(10.0),
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          color: Color.fromARGB(255, 250, 245, 227),
                           child: ListTile(
                             title: Text(document['Date of Delivery']),
                             subtitle: Text(document['Type']),

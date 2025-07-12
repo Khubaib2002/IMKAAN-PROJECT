@@ -108,16 +108,17 @@ class _RegisterState extends State<Register> {
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                                foregroundColor: Colors.black87,
+                                backgroundColor: const Color(0xFFFFCA03),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32.0, vertical: 12.0),
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w900, fontSize: 16),
                               ),
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: 12.0, horizontal: 30.0),
-                                child: Text('Login',
+                                child: Text('Register and Login',
                                     style: TextStyle(fontSize: 18)),
                               ),
                             ),

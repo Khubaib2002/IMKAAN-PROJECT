@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imkaan/mental/update.dart';
+import 'package:imkaan/mental/search.dart';
 
 class Msearchorupdate extends StatelessWidget {
   const Msearchorupdate({super.key});
@@ -14,11 +15,11 @@ class Msearchorupdate extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            const Spacer(), // Pushes the logo to the right
+            const Spacer(),
             Text(
               'Patient Management',
               style: GoogleFonts.poppins(
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 70, 61, 1),
               ),
@@ -95,12 +96,12 @@ class Msearchorupdate extends StatelessWidget {
                     label: 'Search Patient',
                     icon: Icon(Icons.search),
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const SearchPatientPage(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Search(),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(width: 30),
